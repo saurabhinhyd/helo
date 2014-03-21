@@ -5,8 +5,8 @@
 
     <QuickContactBadge
         android:id="@+id/contactImageView"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_action_contact" 
