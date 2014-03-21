@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="160dp"
+    android:layout_height="160dp" >
+
+    <ImageView
+        android:id="@+id/contactPictureImageView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_action_contact" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grey_transparent" >
+    
+	    <TextView
+	        android:id="@+id/contactNameTextView"
+	        android:layout_width="125dp"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="6dp"
+	        android:maxLines="1"
+	        android:text="Contact name"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textColor="@android:color/primary_text_dark" />
+	    
+	    <ImageButton
+	        android:id="@+id/contactRemoveBtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:background="@null"
+	        android:src="@drawable/ic_action_remove_dark" />
+	
+	</RelativeLayout>
+
+
+	
+</RelativeLayout>

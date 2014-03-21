@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <QuickContactBadge
+        android:id="@+id/contactImageView"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_action_contact" 
+        android:contentDescription="@string/contact_thumb_label"/>
+
+    <TextView
+        android:id="@+id/contactNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/contactImageView"
+        android:gravity="center_vertical"
+        android:text="Contact Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/targetFreqTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/contactNameTextView"
+        android:layout_below="@+id/contactNameTextView"
+        android:text="Target Frequency"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/scoreImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contactNameTextView"
+        android:layout_toRightOf="@+id/targetFreqTextView"
+        android:paddingTop="2dp"
+        android:src="@drawable/ic_hourglass" />
+        
+    <TextView
+        android:id="@+id/lastContactedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contactNameTextView"
+        android:layout_toRightOf="@+id/scoreImageView"
+        android:text="@string/last_contacted"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageButton
+        android:id="@+id/contactDialBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@null"
+        android:src="@drawable/ic_action_dial"
+        android:contentDescription="@string/call_contact_label" />
+    
+</RelativeLayout>

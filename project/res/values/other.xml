@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="list_row_position" />
+    <item type="id" name="contact_phone_number" />
+    <color name="grey_transparent">#77000000</color>
+    <string-array name="frequency_list">
+        <item>@string/days</item>
+        <item>@string/weeks</item>
+        <item>@string/months</item>
+    </string-array>
+</resources>
