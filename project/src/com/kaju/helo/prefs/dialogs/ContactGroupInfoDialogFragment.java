@@ -1,12 +1,16 @@
 package com.kaju.helo.prefs.dialogs;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -20,8 +24,18 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
 
 	protected Spinner mSpinnerCallFreqUnits;
 	
+	protected AlertDialog mDialog;
+	
 	public String getGroupLabel() {
 		return mEditTextGroupLabel.getText().toString();
+	}	
+
+	private boolean isValidCallFreq(Editable s) {
+		return (s.length() > 0);			
+	}
+	
+	private boolean isValidGroupName(Editable s) {
+		return (s.length() > 0);	
 	}
 	
 	public Integer getCallFrequencyValue() {
@@ -60,9 +74,19 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
         mEditTextCallFreqValue = (EditText)dialogView.findViewById(R.id.editTextCallFrequencyValue);
         mSpinnerCallFreqUnits = (Spinner)dialogView.findViewById(R.id.spinnerCallFrequencyUnits);
 	
+        mEditTextGroupLabel.addTextChangedListener(mGroupLabelWatcher);
+        mEditTextCallFreqValue.addTextChangedListener(mCallFreqValWatcher);
+        
         return dialogView;
 	}	
-
+	
+	protected Button getButton(int whichButton) {
+		AlertDialog dialog = (AlertDialog)getDialog();
+		if (dialog != null) 
+			return dialog.getButton(whichButton);
+		else
+			return null;
+	}
 	
 	@Override
 	public void onCancel(DialogInterface dialog) {
@@ -81,5 +105,56 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
     
     public void setClickListener(ContactGroupInfoDialogListener listener) {
     	mListener = listener;
-    }	
+    }
+    
+    TextWatcher mGroupLabelWatcher = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			Button positiveButton = getButton(AlertDialog.BUTTON_POSITIVE);			
+			if (positiveButton != null) {
+				positiveButton.setEnabled(isValidGroupName(s));
+			}			
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    };
+    
+    TextWatcher mCallFreqValWatcher = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			Button positiveButton = getButton(AlertDialog.BUTTON_POSITIVE);
+			if (positiveButton != null)
+				positiveButton.setEnabled(isValidCallFreq(s));
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    };
 }
