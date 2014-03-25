@@ -36,6 +36,11 @@
             >
         </activity>
         
+        <activity
+            android:name="com.kaju.helo.settings.SettingsActivity"
+            android:label="@string/action_settings" 
+        />
+        
         <service
             android:name="com.kaju.helo.notify.ContactReminderService"
             android:exported="false"  

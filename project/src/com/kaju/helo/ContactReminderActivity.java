@@ -8,6 +8,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 //import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.groups.ContactGroupsActivity;
 import com.kaju.helo.groups.PrefsDBHelper;
+import com.kaju.helo.settings.SettingsActivity;
 
 public class ContactReminderActivity extends ListActivity {
 
@@ -53,8 +55,10 @@ public class ContactReminderActivity extends ListActivity {
 		});
 		
 		setListAdapter(mAdapter);
-		
-//		TestNotifications.fireNotification(this);
+
+		// initialize the associated SharedPreferences file with default values 
+		// for each Preference when the user first opens the application
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 	}
 	
 	@Override
@@ -85,20 +89,28 @@ public class ContactReminderActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+        case R.id.action_groups:
+        	startGroupsActivity();
+        	return true;
         case R.id.action_settings:
-        	startPrefActivity();
+        	startSettingsActivity();
         	return true;
         default:
         	return super.onOptionsItemSelected(item);
         }
     }
     
-    private void startPrefActivity() {
+    private void startGroupsActivity() {
     	Intent intent = new Intent(this, ContactGroupsActivity.class);
     	try {
     		startActivity(intent);
     	} catch(Exception e) {
     		System.out.println(e);
     	}
+    }
+    
+    private void startSettingsActivity() {
+    	Intent intent = new Intent(this, SettingsActivity.class);
+    	startActivity(intent);
     }
 }
