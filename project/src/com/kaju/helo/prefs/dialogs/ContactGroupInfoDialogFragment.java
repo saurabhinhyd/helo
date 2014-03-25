@@ -38,6 +38,14 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
 		return (s.length() > 0);	
 	}
 	
+	private boolean isValidCallFreq() {
+		return isValidCallFreq(mEditTextCallFreqValue.getText());
+	}
+	
+	private boolean isValidGroupName() {
+		return isValidGroupName(mEditTextGroupLabel.getText());
+	}
+	
 	public Integer getCallFrequencyValue() {
 		return Integer.parseInt(mEditTextCallFreqValue.getText().toString());
 	}
@@ -113,7 +121,7 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
 		public void afterTextChanged(Editable s) {
 			Button positiveButton = getButton(AlertDialog.BUTTON_POSITIVE);			
 			if (positiveButton != null) {
-				positiveButton.setEnabled(isValidGroupName(s));
+				positiveButton.setEnabled(isValidGroupName(s) && isValidCallFreq());
 			}			
 		}
 
@@ -139,7 +147,7 @@ public class ContactGroupInfoDialogFragment extends DialogFragment{
 		public void afterTextChanged(Editable s) {
 			Button positiveButton = getButton(AlertDialog.BUTTON_POSITIVE);
 			if (positiveButton != null)
-				positiveButton.setEnabled(isValidCallFreq(s));
+				positiveButton.setEnabled(isValidCallFreq(s) && isValidGroupName());
 		}
 
 		@Override

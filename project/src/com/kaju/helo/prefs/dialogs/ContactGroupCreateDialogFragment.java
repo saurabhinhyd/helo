@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import com.kaju.helo.R;
 
@@ -40,5 +41,15 @@ public class ContactGroupCreateDialogFragment extends
         });      
  
         return builder.create();
-    }    
+    }
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		Button okBtn = getButton(AlertDialog.BUTTON_POSITIVE);
+		if (okBtn != null) {
+			okBtn.setEnabled(false);
+		}
+	}
+		
 }
