@@ -11,9 +11,9 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 
-import com.kaju.helo.prefs.CallFrequency;
-import com.kaju.helo.prefs.ContactGroup;
-import com.kaju.helo.prefs.PrefsDBHelper;
+import com.kaju.helo.groups.CallFrequency;
+import com.kaju.helo.groups.ContactGroup;
+import com.kaju.helo.groups.PrefsDBHelper;
 
 class ContactScore {
 	

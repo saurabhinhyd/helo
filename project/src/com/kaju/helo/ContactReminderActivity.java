@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.ImageButton;
 
 //import com.kaju.helo.notify.TestNotifications;
-import com.kaju.helo.prefs.ContactGroupsActivity;
-import com.kaju.helo.prefs.PrefsDBHelper;
+import com.kaju.helo.groups.ContactGroupsActivity;
+import com.kaju.helo.groups.PrefsDBHelper;
 
 public class ContactReminderActivity extends ListActivity {
 

@@ -29,7 +29,7 @@
         </activity>
 
         <activity             
-            android:name="com.kaju.helo.prefs.ContactGroupsActivity"           
+            android:name="com.kaju.helo.groups.ContactGroupsActivity"           
             android:parentActivityName="com.kaju.helo.ContactReminderActivity" 
             android:label="@string/action_groups"    
             android:theme="@style/AppBaseTheme.WhiteTextSpinner"        
