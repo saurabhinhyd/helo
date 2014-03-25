@@ -36,6 +36,11 @@
             >
         </activity>
         
+        <service
+            android:name="com.kaju.helo.notify.ContactReminderService"
+            android:exported="false"  
+        />
+        
     </application>
 
 </manifest>

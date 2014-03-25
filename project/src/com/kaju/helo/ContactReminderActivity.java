@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+//import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.prefs.ContactGroupsActivity;
 import com.kaju.helo.prefs.PrefsDBHelper;
 
@@ -52,6 +53,8 @@ public class ContactReminderActivity extends ListActivity {
 		});
 		
 		setListAdapter(mAdapter);
+		
+//		TestNotifications.fireNotification(this);
 	}
 	
 	@Override
