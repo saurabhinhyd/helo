@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 public class SettingsActivity extends Activity
 								implements OnSharedPreferenceChangeListener {
@@ -19,7 +20,7 @@ public class SettingsActivity extends Activity
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+                .commit();        
     }
 
 	@Override
@@ -40,14 +41,16 @@ public class SettingsActivity extends Activity
 	@Override
 	protected void onResume() {
 	    super.onResume();
-	    getPreferences(MODE_PRIVATE)
-	            .registerOnSharedPreferenceChangeListener(this);
+	    
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	    prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
 	protected void onPause() {
 	    super.onPause();
-	    getPreferences(MODE_PRIVATE)
-	            .unregisterOnSharedPreferenceChangeListener(this);
+	    
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	    prefs.unregisterOnSharedPreferenceChangeListener(this);
 	}	
 }

@@ -14,7 +14,7 @@ public class ContactReminderService extends IntentService {
 	   * A constructor is required, and must call the super IntentService(String)
 	   * constructor with a name for the worker thread.
 	   */
-	public ContactReminderService(String name) {
+	public ContactReminderService() {
 		super("ContactReminderService");
 	}
 	
