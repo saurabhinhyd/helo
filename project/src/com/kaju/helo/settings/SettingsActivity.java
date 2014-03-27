@@ -13,6 +13,10 @@ public class SettingsActivity extends Activity
 	
 	public static final String KEY_PREF_NOTIFICATIONS = "pref_notifications";
 	
+	public static final String KEY_PREF_NOTIFY_AT_HOUR = "pref_notify_at_hour";
+	
+	public static final String KEY_PREF_NOTIFY_AT_MINUTE = "pref_notify_at_minute";
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,17 +29,17 @@ public class SettingsActivity extends Activity
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(KEY_PREF_NOTIFICATIONS)) {
-			boolean doNotifications = sharedPreferences.getBoolean(key, true);
-			NotificationScheduler notificationScheduler = NotificationScheduler.getInstance(this);
-			if (notificationScheduler != null) {
-				if (doNotifications) {
-					notificationScheduler.scheduleDailyAt(9);
-				} else {				
-					notificationScheduler.disableNotifications();				
-				}
-			}
-		}		
+		boolean doNotifications = sharedPreferences.getBoolean(KEY_PREF_NOTIFICATIONS, true);
+		int notificationHour = sharedPreferences.getInt(KEY_PREF_NOTIFY_AT_HOUR, 9);
+		int notificationMinute = sharedPreferences.getInt(KEY_PREF_NOTIFY_AT_MINUTE, 0);
+		
+		NotificationScheduler notificationScheduler = NotificationScheduler.getInstance(this);
+		
+		if (key.equals(KEY_PREF_NOTIFICATIONS) && !doNotifications) {
+			notificationScheduler.disableNotifications();			
+		} else {
+			notificationScheduler.scheduleDailyAt(notificationHour, notificationMinute);
+		}
 	}
 	
 	@Override
