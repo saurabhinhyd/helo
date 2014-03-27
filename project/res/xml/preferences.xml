@@ -10,6 +10,6 @@
 	    	android:key="pref_notification_time"
 	    	android:dependency="pref_notifications"
 	    	android:title="@string/pref_notification_time"
-	    />
+	    	android:defaultValue="1100" />
 	
 </PreferenceScreen>

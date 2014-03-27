@@ -1,6 +1,10 @@
 package com.kaju.helo.settings;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
@@ -70,8 +74,15 @@ public class TimePickerPreference extends DialogPreference {
 	}
 	
 	public static String getSummaryFromTime(Integer time) {
-		return Integer.toString(time/100) + " hours, " + 
-				Integer.toString(time % 100) + " minutes";
+		int hourOfDay = time / 100;
+		int minute = time % 100;
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+		calendar.set(Calendar.MINUTE, minute);		
+		
+		return DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
 	}
 	
 	@Override
@@ -88,6 +99,11 @@ public class TimePickerPreference extends DialogPreference {
 	    
 	    setSummary(getSummaryFromTime(mInitialValue));
 
+	}
+	
+	@Override
+	protected Object onGetDefaultValue(TypedArray a, int index) {
+	    return a.getInteger(index, DEFAULT_VALUE);
 	}
 	
 	private static class SavedState extends BaseSavedState {
