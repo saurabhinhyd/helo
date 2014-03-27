@@ -35,7 +35,7 @@ public class ContactReminderService extends IntentService {
 	
 	private void fireNotification() {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-										.setSmallIcon(R.drawable.ic_hourglass)
+										.setSmallIcon(R.drawable.ic_hourglass_dark)
 										.setContentTitle("My notification")
 										.setContentText("Hello World!");
 		
