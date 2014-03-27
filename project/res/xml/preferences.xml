@@ -6,4 +6,10 @@
 	        android:title="@string/pref_notifications"	        
 	        android:defaultValue="true" />
 	
+	<com.kaju.helo.settings.TimePickerPreference
+	    	android:key="pref_notification_time"
+	    	android:dependency="pref_notifications"
+	    	android:title="@string/pref_notification_time"
+	    />
+	
 </PreferenceScreen>
