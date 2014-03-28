@@ -49,7 +49,7 @@ public class ContactReminderActivity extends ListActivity {
 				ImageButton dialBtn = (ImageButton)v;
 				String phoneNumber = (String) dialBtn.getTag(R.id.contact_phone_number);
 				
-		    	Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+		    	Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
 		    	startActivity(intent);    				
 			}
 		});
