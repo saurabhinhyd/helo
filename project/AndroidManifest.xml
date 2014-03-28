@@ -42,7 +42,7 @@
         />
         
         <service
-            android:name="com.kaju.helo.notify.ContactReminderService"
+            android:name="com.kaju.helo.ContactReminderService"
             android:exported="false"  
         />
         

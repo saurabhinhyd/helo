@@ -2,6 +2,8 @@ package com.kaju.helo.notify;
 
 import java.util.Calendar;
 
+import com.kaju.helo.ContactReminderService;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
