@@ -20,6 +20,8 @@ public class NotificationDispatcher {
 		int notificationId = 001;
 		
 		// Builds the notification and issues it.
-		notifyMgr.notify(notificationId, notification);		
+		if (notification != null) {
+			notifyMgr.notify(notificationId, notification);
+		}
 	}
 }

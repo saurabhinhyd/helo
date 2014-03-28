@@ -1,6 +1,7 @@
 package com.kaju.helo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -36,20 +37,17 @@ public class ContactReminderService extends IntentService {
 			if (contactScore.getScore() >= 1) {
 				contactList.add(contactScore);
 			}
-		}	
+		}		
 		
-		boolean pendingCalls = contactList.size() > 0;
+		fireNotification(contactList);
 		
-		if (pendingCalls) {
-			fireNotification();
-		}
 	}	
 	
-	private void fireNotification() {
+	private void fireNotification(List<ContactScore> contactList) {
 		NotificationBuilder builder = new NotificationBuilder(this);
 		
 		NotificationDispatcher dispatcher = new NotificationDispatcher(this);
 		
-		dispatcher.dispatchNotification(builder.build());
+		dispatcher.dispatchNotification(builder.build(contactList));
 	}		
 }

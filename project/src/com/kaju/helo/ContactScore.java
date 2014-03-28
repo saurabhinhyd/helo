@@ -15,7 +15,7 @@ import com.kaju.helo.groups.CallFrequency;
 import com.kaju.helo.groups.ContactGroup;
 import com.kaju.helo.groups.PrefsDBHelper;
 
-class ContactScore {
+public class ContactScore {
 	
 	private final String mLookupKey;	
 
