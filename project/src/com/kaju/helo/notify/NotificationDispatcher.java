@@ -6,6 +6,8 @@ import android.content.Context;
 
 public class NotificationDispatcher {
 	
+	public static final int NOTIFICATION_ID = 001;
+	
 	private final Context mContext;	
 	
 	public NotificationDispatcher(Context ctx) {
@@ -16,12 +18,9 @@ public class NotificationDispatcher {
 		NotificationManager notifyMgr = 
 		        (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		
-		// Sets an ID for the notification
-		int notificationId = 001;
-		
 		// Builds the notification and issues it.
 		if (notification != null) {
-			notifyMgr.notify(notificationId, notification);
+			notifyMgr.notify(NOTIFICATION_ID, notification);
 		}
 	}
 }

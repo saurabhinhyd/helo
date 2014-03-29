@@ -57,13 +57,15 @@ public class NotificationBuilder {
 				Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), imageUri);
 				mBuilder.setLargeIcon(bitmap);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// do nothing
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// do nothing
 			}		
 		}
+		
+		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contactScore.getPhoneNumber()));
+		PendingIntent piCallIntent = PendingIntent.getActivity(mContext, 0, callIntent, 0);		
+		mBuilder.addAction(R.drawable.ic_action_call_dark, getString(R.string.action_call), piCallIntent);
 
 		mBuilder.setContentIntent(buildContentIntent());		
 		
@@ -72,7 +74,7 @@ public class NotificationBuilder {
 	
 	private Notification buildForMultipleContacts(List<ContactScore> contactScoreList) {		
 		String pendingCallCount = Integer.toString(contactScoreList.size()); 
-		String title = pendingCallCount + " " + mContext.getResources().getString(R.string.pending_calls);
+		String title = pendingCallCount + " " + getString(R.string.pending_calls);
 		
 		// TODO concatenate names of all contacts in contactScoreList and display in notification text
 		// (Example: "Aadithya, Mom and Pallav")
@@ -112,7 +114,7 @@ public class NotificationBuilder {
 		String friendlyDate;
 
 		if (lastContacted.getTime() == 0) {
-			friendlyDate = mContext.getResources().getString(R.string.never);
+			friendlyDate = getString(R.string.never);
 		} else {		
 			long diff = new Date().getTime() - lastContacted.getTime();
 			int diffDays = (int) Math.ceil((double) diff / 86400000L);
@@ -124,16 +126,19 @@ public class NotificationBuilder {
 			if (nowCalendar.get(Calendar.DAY_OF_MONTH) == thenCalendar.get(Calendar.DAY_OF_MONTH) &&
 					nowCalendar.get(Calendar.MONTH) == thenCalendar.get(Calendar.MONTH) &&
 					nowCalendar.get(Calendar.YEAR) == thenCalendar.get(Calendar.YEAR)) {
-				friendlyDate = mContext.getResources().getString(R.string.today);
+				friendlyDate = getString(R.string.today);
 			} else if (diffDays == 1) {
-				friendlyDate = mContext.getResources().getString(R.string.a_day_ago);
+				friendlyDate = getString(R.string.a_day_ago);
 			} else {
-				friendlyDate = Integer.toString(diffDays) + " " 
-						+ mContext.getResources().getString(R.string.days_ago);			
+				friendlyDate = Integer.toString(diffDays) + " " + getString(R.string.days_ago);			
 			}
 		}
 		
 		return friendlyDate;
 	}	
+	
+	private String getString(int resId) {
+		return mContext.getResources().getString(resId);
+	}
 
 }
