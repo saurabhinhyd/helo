@@ -76,12 +76,15 @@ public class NotificationBuilder {
 		String pendingCallCount = Integer.toString(contactScoreList.size()); 
 		String title = pendingCallCount + " " + getString(R.string.pending_calls);
 		
-		// TODO concatenate names of all contacts in contactScoreList and display in notification text
-		// (Example: "Aadithya, Mom and Pallav")
+		Notification.InboxStyle notificationStyle = new Notification.InboxStyle();
+		for (ContactScore  contact : contactScoreList) {
+			notificationStyle.addLine(contact.getDisplayName());
+		}		
 		
 		Notification.Builder mBuilder = new Notification.Builder(mContext)
 		.setSmallIcon(R.drawable.ic_hourglass_dark)
-		.setContentTitle(title)		
+		.setContentTitle(title)
+		.setStyle(notificationStyle)
 		.setAutoCancel(true);	
 		
 		mBuilder.setContentIntent(buildContentIntent());		
