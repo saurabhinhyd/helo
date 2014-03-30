@@ -45,7 +45,7 @@ public class NotificationBuilder {
 		String lastContactedString = getFriendlyDateString(contactScore.getLastContacted());		
 		
 		Notification.Builder mBuilder = new Notification.Builder(mContext)
-		.setSmallIcon(R.drawable.ic_hourglass_dark)
+		.setSmallIcon(R.drawable.ic_stat_hourglass_dark)
 		.setContentTitle(contactName)
 		.setContentText(lastContactedLabel + ": " + lastContactedString)
 		.setAutoCancel(true);	
@@ -82,7 +82,7 @@ public class NotificationBuilder {
 		}		
 		
 		Notification.Builder mBuilder = new Notification.Builder(mContext)
-		.setSmallIcon(R.drawable.ic_hourglass_dark)
+		.setSmallIcon(R.drawable.ic_stat_hourglass_dark)
 		.setContentTitle(title)
 		.setStyle(notificationStyle)
 		.setAutoCancel(true);	
