@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import com.kaju.helo.BootCompleteReceiver;
 import com.kaju.helo.notify.NotificationScheduler;
 
 public class SettingsActivity extends Activity
@@ -41,9 +42,11 @@ public class SettingsActivity extends Activity
 		NotificationScheduler notificationScheduler = NotificationScheduler.getInstance(this);
 		
 		if (key.equals(KEY_PREF_NOTIFICATIONS) && !doNotifications) {
-			notificationScheduler.disableNotifications();			
+			notificationScheduler.disableNotifications();	
+			BootCompleteReceiver.disableBroadcastReceiver(this);
 		} else {			
 			notificationScheduler.scheduleDailyAt(notificationHour, notificationMinute);
+			BootCompleteReceiver.enableBroadcastReceiver(this);
 		}
 	}
 	
