@@ -28,6 +28,8 @@
     <string name="monthly">Monthly</string>
     <string name="create_group">New group&#8230;</string>
     
+    <string name="create_group_failed">Failed to create group</string>
+    
     <!--  Create/Edit contact group dialog -->
     <string name="create_group_dialog_title">New group</string>
     <string name="edit_group_dialog_title">Edit group</string>    

@@ -198,7 +198,7 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	    ContactGroup contactGroup = null;
 	    
 	    // Inserting Row
-	    long rowID = db.insert(TABLE_CONTACT_GROUPS, null, values);	    
+	    long rowID = db.insertOrThrow(TABLE_CONTACT_GROUPS, null, values);	    
 	    if (rowID != -1) {
 	    	contactGroup = ContactGroup.newInstance(rowID);
 	    	contactGroup.setLabel(label);
