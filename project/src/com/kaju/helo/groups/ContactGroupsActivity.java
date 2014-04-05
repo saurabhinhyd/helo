@@ -153,7 +153,7 @@ public class ContactGroupsActivity extends Activity
 		
 		@Override
 		public void onDialogPositiveClick(ContactGroupInfoDialogFragment dialog) {
-			String groupLabel = dialog.getGroupLabel();
+			String groupLabel = dialog.getGroupLabel().trim();
 			CallFrequency freq = new CallFrequency(dialog.getCallFrequencyValue(), dialog.getCallFrequencyUnits());		
 			
 			PrefsDBHelper prefs = new PrefsDBHelper(ContactGroupsActivity.this);
@@ -165,8 +165,9 @@ public class ContactGroupsActivity extends Activity
 				getActionBar().setSelectedNavigationItem(index);
 				onNavigationItemSelected(index, 0);
 				
-			} catch (Exception e) {
-				Toast.makeText(ContactGroupsActivity.this, "Failed to create group", Toast.LENGTH_LONG).show();
+			} catch (Exception e) {				
+				Toast.makeText(ContactGroupsActivity.this, R.string.create_group_failed, Toast.LENGTH_LONG).show();
+				getActionBar().setSelectedNavigationItem(mPrevNavIndex);
 			}
 			
 		}

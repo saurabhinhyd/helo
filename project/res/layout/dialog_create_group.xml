@@ -23,7 +23,8 @@
         android:layout_below="@+id/editTextGroupLabel"
         android:ems="10"
         android:hint="@string/group_info_dialog_hint_frequency"
-        android:inputType="number" />
+        android:inputType="number"
+        android:maxLength="3" />
 
     <Spinner
         android:id="@+id/spinnerCallFrequencyUnits"
