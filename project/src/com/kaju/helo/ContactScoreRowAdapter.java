@@ -79,17 +79,20 @@ class ContactScoreRowAdapter extends ArrayAdapter<ContactScore> {
 
 		if (lastContacted.getTime() == 0) {
 			friendlyDate = this.context.getResources().getString(R.string.never);
-		} else {		
-			long diff = new Date().getTime() - lastContacted.getTime();
-			int diffDays = (int) Math.ceil((double) diff / 86400000L);
-			
+		} else {	
 			Calendar nowCalendar = Calendar.getInstance();
 			Calendar thenCalendar = Calendar.getInstance();
 			thenCalendar.setTime(lastContacted);
+
+			int diffDays = 0;
+			if (nowCalendar.get(Calendar.YEAR) == thenCalendar.get(Calendar.YEAR)) {
+				diffDays = nowCalendar.get(Calendar.DAY_OF_YEAR) - thenCalendar.get(Calendar.DAY_OF_YEAR);
+			} else {
+				long diff = new Date().getTime() - lastContacted.getTime();
+				diffDays = (int) Math.ceil((double) diff / 86400000L);
+			}
 			
-			if (nowCalendar.get(Calendar.DAY_OF_MONTH) == thenCalendar.get(Calendar.DAY_OF_MONTH) &&
-					nowCalendar.get(Calendar.MONTH) == thenCalendar.get(Calendar.MONTH) &&
-					nowCalendar.get(Calendar.YEAR) == thenCalendar.get(Calendar.YEAR)) {
+			if (diffDays == 0) {
 				friendlyDate = this.context.getResources().getString(R.string.today);
 			} else if (diffDays == 1) {
 				friendlyDate = this.context.getResources().getString(R.string.a_day_ago);
