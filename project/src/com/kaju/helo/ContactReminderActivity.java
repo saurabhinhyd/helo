@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 //import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.groups.ContactGroupsActivity;
 import com.kaju.helo.groups.PrefsDBHelper;
+import com.kaju.helo.notify.NotificationScheduler;
 import com.kaju.helo.settings.SettingsActivity;
 
 public class ContactReminderActivity extends ListActivity {
@@ -59,6 +61,8 @@ public class ContactReminderActivity extends ListActivity {
 		// initialize the associated SharedPreferences file with default values 
 		// for each Preference when the user first opens the application
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		
+		setupNotifications();
 	}
 	
 	@Override
@@ -112,5 +116,21 @@ public class ContactReminderActivity extends ListActivity {
     private void startSettingsActivity() {
     	Intent intent = new Intent(this, SettingsActivity.class);
     	startActivity(intent);
+    }
+    
+    private void setupNotifications() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);		
+		boolean doNotifications = prefs.getBoolean(SettingsActivity.KEY_PREF_NOTIFICATIONS, true);
+		
+		if (doNotifications) {
+			int notificationTime = prefs.getInt(SettingsActivity.KEY_PREF_NOTIFICATION_TIME, 900);
+			int notificationHour = notificationTime / 100;
+			int notificationMinute = notificationTime % 100;
+			
+			NotificationScheduler notificationScheduler = NotificationScheduler.getInstance(this);
+			notificationScheduler.scheduleDailyAt(notificationHour, notificationMinute);
+			BootCompleteReceiver.enableBroadcastReceiver(this);			
+		}
+		    	
     }
 }
