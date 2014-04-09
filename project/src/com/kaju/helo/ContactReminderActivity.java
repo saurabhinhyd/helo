@@ -60,9 +60,17 @@ public class ContactReminderActivity extends ListActivity {
 
 		// initialize the associated SharedPreferences file with default values 
 		// for each Preference when the user first opens the application
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);		
 		
-		setupNotifications();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+		if (isFirstRun) {		
+			setupNotifications();
+			
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putBoolean("isFirstRun", false);
+			editor.commit();						
+		}
 	}
 	
 	@Override
@@ -119,7 +127,7 @@ public class ContactReminderActivity extends ListActivity {
     }
     
     private void setupNotifications() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean doNotifications = prefs.getBoolean(SettingsActivity.KEY_PREF_NOTIFICATIONS, true);
 		
 		if (doNotifications) {
