@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Notification;
+import android.support.v4.app.NotificationCompat;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
+import android.support.v4.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -44,7 +45,7 @@ public class NotificationBuilder {
 		String lastContactedLabel = mContext.getResources().getString(R.string.last_contacted);
 		String lastContactedString = getFriendlyDateString(contactScore.getLastContacted());		
 		
-		Notification.Builder mBuilder = new Notification.Builder(mContext)
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
 		.setDefaults(Notification.DEFAULT_ALL)
 		.setSmallIcon(R.drawable.ic_stat_hourglass_dark)
 		.setContentTitle(contactName)
@@ -77,12 +78,12 @@ public class NotificationBuilder {
 		String pendingCallCount = Integer.toString(contactScoreList.size()); 
 		String title = pendingCallCount + " " + getString(R.string.pending_calls);
 		
-		Notification.InboxStyle notificationStyle = new Notification.InboxStyle();
+		NotificationCompat.InboxStyle notificationStyle = new NotificationCompat.InboxStyle();
 		for (ContactScore  contact : contactScoreList) {
 			notificationStyle.addLine(contact.getDisplayName());
 		}		
 		
-		Notification.Builder mBuilder = new Notification.Builder(mContext)
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
 		.setDefaults(Notification.DEFAULT_ALL)
 		.setSmallIcon(R.drawable.ic_stat_hourglass_dark)
 		.setContentTitle(title)

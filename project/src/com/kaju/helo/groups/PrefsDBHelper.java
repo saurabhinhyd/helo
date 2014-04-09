@@ -3,11 +3,13 @@ package com.kaju.helo.groups;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.provider.BaseColumns;
 
 import com.kaju.helo.R;
@@ -44,14 +46,22 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 		mCtx = ctx;
 	}
 	
+	@TargetApi(16)
 	@Override
-	public void onConfigure (SQLiteDatabase db) {
-	    super.onConfigure(db);
-	    if (!db.isReadOnly()) {
-	        // Enable foreign key constraints
-//	        db.execSQL("PRAGMA foreign_keys=ON;");
-	        db.setForeignKeyConstraintsEnabled(true);
-	    }
+	public void onOpen (SQLiteDatabase db) {
+		super.onOpen(db);
+		
+		// Enable foreign key constraints
+		if (!db.isReadOnly()) {
+			
+			// a better place to write PRAGMA statements is in the onConfigure()
+			// method which was introduced in API 16
+			if (Build.VERSION.SDK_INT < 16) {		        
+		        db.execSQL("PRAGMA foreign_keys=ON;");
+		    } else {
+		    	db.setForeignKeyConstraintsEnabled(true);
+		    }
+		}
 	}
 
 	@Override
