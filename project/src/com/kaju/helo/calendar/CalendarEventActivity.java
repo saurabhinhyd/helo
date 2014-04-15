@@ -6,9 +6,13 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.Data;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,6 +94,35 @@ public class CalendarEventActivity extends ListActivity {
     }
     
     private void doImportFromContact(Uri contactUri) {
+    	String lookupKey = null;    	
+    	Cursor c = getContentResolver().query(contactUri, null, null, null, null);      	 
+	    if (c.moveToNext()) {		    	 
+	    	int lookupKeyColumn = c.getColumnIndex(Contacts.LOOKUP_KEY);
+	    	lookupKey = c.getString(lookupKeyColumn);
+	    }
+	    c.close();
     	
+	    if (lookupKey != null) {
+	    	String dateBirthday = retrieveEventStartDate(lookupKey, Event.TYPE_BIRTHDAY);
+	    }
+    }
+    
+    private String retrieveEventStartDate(String lookupKey, int eventType) {
+       	Cursor c = getContentResolver().query(Data.CONTENT_URI,
+    			new String[] {Event.START_DATE},
+    			ContactsContract.Contacts.LOOKUP_KEY + "=?" + " AND " +
+    			Data.MIMETYPE + "='" + Event.CONTENT_ITEM_TYPE + "'" + " AND " +
+    			Event.TYPE + "=?" ,    	                  
+    	        new String[] {lookupKey, String.valueOf(eventType)}, 
+    	        null);    	
+	
+       	String eventStartDate = null;
+    	if (c.moveToNext()) {
+    		int startDateColIndex = c.getColumnIndex(Event.START_DATE);    		
+    		eventStartDate = c.getString(startDateColIndex);
+    	}    	
+    	c.close();
+    	
+    	return eventStartDate;
     }
 }
