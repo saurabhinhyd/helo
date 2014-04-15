@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.kaju.helo.calendar.CalendarEventActivity;
 //import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.groups.ContactGroupsActivity;
 import com.kaju.helo.groups.PrefsDBHelper;
@@ -101,6 +102,9 @@ public class ContactReminderActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+        case R.id.action_calendar:
+        	startCalendarActivity();
+        	return true;
         case R.id.action_groups:
         	startGroupsActivity();
         	return true;
@@ -110,6 +114,11 @@ public class ContactReminderActivity extends ListActivity {
         default:
         	return super.onOptionsItemSelected(item);
         }
+    }
+    
+    private void startCalendarActivity() {
+    	Intent intent = new Intent(this, CalendarEventActivity.class);
+    	startActivity(intent);    	
     }
     
     private void startGroupsActivity() {
