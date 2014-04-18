@@ -1,6 +1,9 @@
 package com.kaju.helo.calendar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -16,6 +19,9 @@ import android.provider.ContactsContract.Data;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.SimpleExpandableListAdapter;
 
 import com.kaju.helo.R;
 import com.kaju.helo.groups.ContactGroup;
@@ -43,11 +49,72 @@ public class CalendarEventActivity extends ListActivity {
 		
 	};
 
+	
+	private ExpandableListAdapter mAdapter;
+	
+	private ExpandableListView mExpListView;
+	
+	static final int[] monthNameIds = { R.string.month_jan,  R.string.month_feb, R.string.month_mar,
+									R.string.month_apr, R.string.month_may, R.string.month_jun,
+									R.string.month_july, R.string.month_aug, R.string.month_sep,
+									R.string.month_oct, R.string.month_nov, R.string.month_dec
+								};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);				
+		
+		// Expandable list - group data
+		List<HashMap<String, String>> groupData = new ArrayList<HashMap<String, String>>(monthNameIds.length);
+		for (int monthIndex = 0; monthIndex < monthNameIds.length; monthIndex++) {
+			HashMap<String, String> monthData = new HashMap<String, String>();
+			monthData.put("month_name", getResources().getString(monthNameIds[monthIndex]));
+			groupData.add(monthData);
+		}
+		
+		// Expandable list - child data
+		String[] contacts = {   "a1", "a2", //jan
+								"b1", "b2",	//feb			
+								"c1", "c2", //mar
+								"d1", "d2", //apr
+								"e1", "e2", //may								
+								"f1", "f2", //june
+								"g1", "g2", //july
+								"h1", "h2", //aug
+								"i1", "i2", //sep
+								"j1", "j2", //oct
+								"k1", "k2", //nov
+								"l1", "l2"  //dec
+							};
+		
+		List<ArrayList<HashMap<String, String>>> childData = new ArrayList<ArrayList<HashMap<String, String>>>(monthNameIds.length);
+		for (int monthIndex = 0; monthIndex < monthNameIds.length; monthIndex++) {
+			HashMap<String, String> monthChild1 = new HashMap<String, String>();
+			monthChild1.put("contact_name", contacts[2*monthIndex]);
+			HashMap<String, String> monthChild2 = new HashMap<String, String>();
+			monthChild2.put("contact_name", contacts[2*monthIndex + 1]);
+			
+			ArrayList<HashMap<String, String>> monthChildren = new ArrayList<HashMap<String, String>>(2);
+			monthChildren.add(monthChild1);
+			monthChildren.add(monthChild2);
+			
+			childData.add(monthChildren);
+		}
+		
+		mAdapter = new SimpleExpandableListAdapter(this, 
+				groupData, R.layout.calendar_group_item, new String[] {"month_name"}, new int[] {android.R.id.text1},
+				childData, R.layout.calendar_child_item, new String[] {"contact_name"}, new int[] {android.R.id.text1});
 		
 		setContentView(R.layout.activity_layout_calendar);
+		mExpListView = (ExpandableListView)findViewById(android.R.id.list);
+		mExpListView.setAdapter(mAdapter);
+	}	
+	
+	@Override
+	protected void onStart() {
+	    super.onStart();
+	    
+	    
 	}
 	
 	@Override
