@@ -24,6 +24,24 @@ import com.kaju.helo.groups.PrefsDBHelper;
 public class CalendarEventActivity extends ListActivity {
 	
 	static final int PICK_CONTACT_REQUEST = 0;
+	
+	private ListContactGroupsDialogFragment.ListContactGroupsDialogListener mListGroupsListener = 
+			new ListContactGroupsDialogFragment.ListContactGroupsDialogListener() {
+
+		@Override
+		public void onDialogPositiveClick(ListContactGroupsDialogFragment dialog) {
+			List<ContactGroup> selectedGroups = dialog.getSelectedGroups();
+			for (ContactGroup group : selectedGroups) {
+				doImportFromGroup(group);
+			}
+		}
+
+		@Override
+		public void onDialogNegativeClick(ListContactGroupsDialogFragment dialog) {
+			// do nothing			
+		}
+		
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +97,8 @@ public class CalendarEventActivity extends ListActivity {
 	    }
 	    ft.addToBackStack(null);
 	    
-	    ListContactGroupsDialogFragment dialogFragment = new ListContactGroupsDialogFragment();	    
+	    ListContactGroupsDialogFragment dialogFragment = new ListContactGroupsDialogFragment();
+	    dialogFragment.setClickListener(mListGroupsListener);
 		dialogFragment.show(ft, "list_groups_dialog");      	
     }
     
