@@ -1,29 +1,23 @@
 package com.kaju.helo.calendar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.Data;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
 
 import com.kaju.helo.R;
+import com.kaju.helo.SortedContactList;
 import com.kaju.helo.groups.ContactGroup;
 import com.kaju.helo.groups.PrefsDBHelper;
 
@@ -45,76 +39,44 @@ public class CalendarEventActivity extends ListActivity {
 		@Override
 		public void onDialogNegativeClick(ListContactGroupsDialogFragment dialog) {
 			// do nothing			
-		}
-		
+		}		
 	};
 
+	private PrefsDBHelper mDBHelper;
 	
-	private ExpandableListAdapter mAdapter;
+	private CalendarEventAdapter mAdapter;
 	
-	private ExpandableListView mExpListView;
-	
-	static final int[] monthNameIds = { R.string.month_jan,  R.string.month_feb, R.string.month_mar,
-									R.string.month_apr, R.string.month_may, R.string.month_jun,
-									R.string.month_july, R.string.month_aug, R.string.month_sep,
-									R.string.month_oct, R.string.month_nov, R.string.month_dec
-								};
+	private SortedContactList mSortedLookupKeys;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);				
 		
-		// Expandable list - group data
-		List<HashMap<String, String>> groupData = new ArrayList<HashMap<String, String>>(monthNameIds.length);
-		for (int monthIndex = 0; monthIndex < monthNameIds.length; monthIndex++) {
-			HashMap<String, String> monthData = new HashMap<String, String>();
-			monthData.put("month_name", getResources().getString(monthNameIds[monthIndex]));
-			groupData.add(monthData);
-		}
+		mDBHelper = new PrefsDBHelper(this);
 		
-		// Expandable list - child data
-		String[] contacts = {   "a1", "a2", //jan
-								"b1", "b2",	//feb			
-								"c1", "c2", //mar
-								"d1", "d2", //apr
-								"e1", "e2", //may								
-								"f1", "f2", //june
-								"g1", "g2", //july
-								"h1", "h2", //aug
-								"i1", "i2", //sep
-								"j1", "j2", //oct
-								"k1", "k2", //nov
-								"l1", "l2"  //dec
-							};
-		
-		List<ArrayList<HashMap<String, String>>> childData = new ArrayList<ArrayList<HashMap<String, String>>>(monthNameIds.length);
-		for (int monthIndex = 0; monthIndex < monthNameIds.length; monthIndex++) {
-			HashMap<String, String> monthChild1 = new HashMap<String, String>();
-			monthChild1.put("contact_name", contacts[2*monthIndex]);
-			HashMap<String, String> monthChild2 = new HashMap<String, String>();
-			monthChild2.put("contact_name", contacts[2*monthIndex + 1]);
-			
-			ArrayList<HashMap<String, String>> monthChildren = new ArrayList<HashMap<String, String>>(2);
-			monthChildren.add(monthChild1);
-			monthChildren.add(monthChild2);
-			
-			childData.add(monthChildren);
-		}
-		
-		mAdapter = new SimpleExpandableListAdapter(this, 
-				groupData, R.layout.calendar_group_item, new String[] {"month_name"}, new int[] {android.R.id.text1},
-				childData, R.layout.calendar_child_item, new String[] {"contact_name"}, new int[] {android.R.id.text1});
+		mSortedLookupKeys = new SortedContactList();
 		
 		setContentView(R.layout.activity_layout_calendar);
-		mExpListView = (ExpandableListView)findViewById(android.R.id.list);
-		mExpListView.setAdapter(mAdapter);
+		
+		mAdapter = new CalendarEventAdapter(this, R.layout.row_layout_calendar_event, 
+													mSortedLookupKeys, Event.TYPE_BIRTHDAY);
+		setListAdapter(mAdapter);
 	}	
 	
 	@Override
 	protected void onStart() {
-	    super.onStart();
+	    super.onStart();	    
 	    
+	    mSortedLookupKeys.clear();
 	    
+	    List<String> lookupKeys = mDBHelper.getAllContactEvents();
+	    
+	    for (String lookupKey: lookupKeys) {
+	    	String displayName = getDisplayName(lookupKey);
+	    	mSortedLookupKeys.insertSorted(lookupKey, displayName);
+	    }	    
+	    
+	    mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -180,6 +142,39 @@ public class CalendarEventActivity extends ListActivity {
     }
     
     private void doImportFromContact(Uri contactUri) {
+    	String lookupKey = getLookupKeyFromUri(contactUri);
+	    if (lookupKey != null) {
+	    	mDBHelper.addContactEvents(lookupKey);
+
+	    	String displayName = getDisplayName(lookupKey);
+	    	mSortedLookupKeys.insertSorted(lookupKey, displayName);
+	    	
+	    	mAdapter.notifyDataSetChanged();
+	    }
+    }
+    
+    private String getDisplayName(String lookupKey) {
+    	
+    	String displayName = null;    	
+		Cursor c = null;
+		
+		ContentResolver contentResolver = getContentResolver();
+		try {
+			Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
+			c = contentResolver.query(contactUri, null, null, null, null);
+			if (c.moveToFirst()) {
+				int displayNameColIndex = c.getColumnIndex(Contacts.DISPLAY_NAME_PRIMARY);
+				displayName = c.getString(displayNameColIndex);				
+			}
+		} finally {
+			if (c != null)
+				c.close();
+		}
+
+		return displayName;    	
+    }    
+    
+    private String getLookupKeyFromUri(Uri contactUri) {
     	String lookupKey = null;    	
     	Cursor c = getContentResolver().query(contactUri, null, null, null, null);      	 
 	    if (c.moveToNext()) {		    	 
@@ -187,28 +182,7 @@ public class CalendarEventActivity extends ListActivity {
 	    	lookupKey = c.getString(lookupKeyColumn);
 	    }
 	    c.close();
-    	
-	    if (lookupKey != null) {
-	    	String dateBirthday = retrieveEventStartDate(lookupKey, Event.TYPE_BIRTHDAY);
-	    }
-    }
-    
-    private String retrieveEventStartDate(String lookupKey, int eventType) {
-       	Cursor c = getContentResolver().query(Data.CONTENT_URI,
-    			new String[] {Event.START_DATE},
-    			ContactsContract.Contacts.LOOKUP_KEY + "=?" + " AND " +
-    			Data.MIMETYPE + "='" + Event.CONTENT_ITEM_TYPE + "'" + " AND " +
-    			Event.TYPE + "=?" ,    	                  
-    	        new String[] {lookupKey, String.valueOf(eventType)}, 
-    	        null);    	
-	
-       	String eventStartDate = null;
-    	if (c.moveToNext()) {
-    		int startDateColIndex = c.getColumnIndex(Event.START_DATE);    		
-    		eventStartDate = c.getString(startDateColIndex);
-    	}    	
-    	c.close();
-    	
-    	return eventStartDate;
+	    
+	    return lookupKey;
     }
 }

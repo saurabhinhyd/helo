@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp" >
 
-    <ExpandableListView
+    <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ExpandableListView>
+        android:layout_height="match_parent" >
+    </ListView>
     
 	<LinearLayout
 	    android:id="@android:id/empty"
@@ -20,14 +22,14 @@
 	    <Button
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="Import"
+	        android:text="@string/action_import_groups"
 	        android:onClick="importFromContactGroups" />
 	    
    	    <TextView        
 	      	android:gravity="center"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:text="No contact events found."	        
+	        android:text="@string/empty_list_events"	        
          	/>    
 	</LinearLayout>    
 

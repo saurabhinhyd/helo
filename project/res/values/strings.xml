@@ -54,19 +54,7 @@
     <!--  Calendar activity -->
     <string name="activity_calendar_title">Contact events</string>
     <string name="action_import_groups">Import from groups</string>
-    <string name="month_jan">January</string>
-    <string name="month_feb">February</string>
-    <string name="month_mar">March</string>
-    <string name="month_apr">April</string>
-    <string name="month_may">May</string>
-    <string name="month_jun">June</string>
-    <string name="month_july">July</string>
-    <string name="month_aug">August</string>
-    <string name="month_sep">September</string>
-    <string name="month_oct">October</string>
-    <string name="month_nov">November</string>
-    <string name="month_dec">December</string>
-    
+    <string name="empty_list_events">Add contacts you call on their birthday</string>   
     
     <!-- List of contact groups dialog -->
     <string name="list_contact_groups_dialog_title">Groups</string>

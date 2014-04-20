@@ -19,7 +19,7 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	private final Context mCtx;
 	
 	// Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     // Database Name
     private static final String DATABASE_NAME = "prefs";
@@ -36,9 +36,13 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
     // Contacts table name
     private static final String TABLE_CONTACTS = "contacts";
     
- // Contacts table column names
+    // Contacts table column names
     private static final String COLUMN_CONTACT_LOOKUPKEY = "lookupKey";
     private static final String COLUMN_CONTACT_GROUP_ID = "groupId";
+    
+    // ContactEvents table name
+    private static final String TABLE_CONTACTEVENTS = "contact_events";
+    private static final String COLUMN_CONTACTEVENTS_LOOKUPKEY = "lookupKey";
     
 	public PrefsDBHelper(Context ctx) {
 		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
@@ -66,6 +70,7 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		// tables created since version 1
 		String CREATE_CONTACT_GROUPS_TABLE = "CREATE TABLE " + TABLE_CONTACT_GROUPS + "("
                 + COLUMN_CONTACT_GROUPS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
 				+ COLUMN_CONTACT_GROUPS_LABEL + " TEXT UNIQUE,"
@@ -86,16 +91,21 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
         addContactGroup(dailyStr, new CallFrequency(1, CallFrequency.DAYS), db);
         addContactGroup(weeklyStr, new CallFrequency(1, CallFrequency.WEEKS), db);
         addContactGroup(monthlyStr, new CallFrequency(1, CallFrequency.MONTHS), db);
+        
+		// tables created since version 2        
+        String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
+        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT UNIQE)";
+        db.execSQL(CREATE_CONTACTEVENTS_TABLE);        
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACT_GROUPS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
- 
-        // Create tables again
-        onCreate(db);
+		if (oldVersion < 2) { 
+	        String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
+	        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT UNIQE)";
+	        db.execSQL(CREATE_CONTACTEVENTS_TABLE);
+		}
+		
 	}
 	
 	public List<String> getContacts(long groupId) {
@@ -305,5 +315,41 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	    db.close();
 	    
 	    return rowsDeleted;
+	}
+	
+	public void addContactEvents(String lookupKey) {
+		SQLiteDatabase db = this.getWritableDatabase();		
+		
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_CONTACTEVENTS_LOOKUPKEY, lookupKey);
+		
+		db.insertOrThrow(TABLE_CONTACTEVENTS, null, values);
+		
+		db.close();
+	}
+	
+	public List<String> getAllContactEvents() {
+		List<String> contacts = new ArrayList<String>();
+		
+		SQLiteDatabase db = this.getReadableDatabase();
+	    Cursor cursor = db.query(TABLE_CONTACTEVENTS, 
+	    		new String[] { COLUMN_CONTACTEVENTS_LOOKUPKEY }, 
+	    		null, null, 
+	    		null, null, null, null);
+	    
+	    while (cursor.moveToNext()) {
+	    	contacts.add(cursor.getString(0));
+	    }
+	    
+	    db.close();
+	    
+		return contacts;		
+	}
+	
+	public void removeContactEvents(String lookupKey) {
+		SQLiteDatabase db = this.getWritableDatabase();
+	    db.delete(TABLE_CONTACTEVENTS, COLUMN_CONTACTEVENTS_LOOKUPKEY + " = ?",
+	            new String[] { String.valueOf(lookupKey) });
+	    db.close();				
 	}
 }
