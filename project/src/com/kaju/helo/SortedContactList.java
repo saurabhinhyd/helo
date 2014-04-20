@@ -22,5 +22,14 @@ public class SortedContactList extends ArrayList<String> {
 	        }
 		}
 	}
+	
+	public String removeSorted(int position) {
+		mContactNames.remove(position);
+		return this.remove(position);
+	}
 
+	public void clearSorted() {
+		mContactNames.clear();
+		this.clear();
+	}
 }

@@ -52,9 +52,10 @@
     <string name="contact_thumb_label">Contact photo</string>
     
     <!--  Calendar activity -->
-    <string name="activity_calendar_title">Contact events</string>
+    <string name="activity_calendar_title">Birthdays</string>
     <string name="action_import_groups">Import from groups</string>
     <string name="empty_list_events">Add contacts you call on their birthday</string>   
+    <string name="unknown">Unknown</string>
     
     <!-- List of contact groups dialog -->
     <string name="list_contact_groups_dialog_title">Groups</string>

@@ -15,6 +15,7 @@ import android.provider.ContactsContract.Contacts;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.kaju.helo.R;
 import com.kaju.helo.SortedContactList;
@@ -60,6 +61,19 @@ public class CalendarEventActivity extends ListActivity {
 		
 		mAdapter = new CalendarEventAdapter(this, R.layout.row_layout_calendar_event, 
 													mSortedLookupKeys, Event.TYPE_BIRTHDAY);
+
+		mAdapter.setRemoveButtonClickHandler(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ImageButton removeBtn = (ImageButton)v;
+				int position = (Integer) removeBtn.getTag(R.id.list_row_position);
+				String lookupKey = mSortedLookupKeys.removeSorted(position);
+				mDBHelper.removeContactEvents(lookupKey);
+				mAdapter.notifyDataSetChanged();
+			}
+		});		
+		
 		setListAdapter(mAdapter);
 	}	
 	
@@ -67,7 +81,7 @@ public class CalendarEventActivity extends ListActivity {
 	protected void onStart() {
 	    super.onStart();	    
 	    
-	    mSortedLookupKeys.clear();
+	    mSortedLookupKeys.clearSorted();
 	    
 	    List<String> lookupKeys = mDBHelper.getAllContactEvents();
 	    
