@@ -1,11 +1,11 @@
 package com.kaju.helo.calendar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.kaju.helo.R;
-import com.kaju.helo.SortedContactList;
 import com.kaju.helo.groups.ContactGroup;
 import com.kaju.helo.groups.PrefsDBHelper;
 
@@ -47,7 +46,7 @@ public class CalendarEventActivity extends ListActivity {
 	
 	private CalendarEventAdapter mAdapter;
 	
-	private SortedContactList mSortedLookupKeys;
+	private ArrayList<ContactEvent> mContacts;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +54,11 @@ public class CalendarEventActivity extends ListActivity {
 		
 		mDBHelper = new PrefsDBHelper(this);
 		
-		mSortedLookupKeys = new SortedContactList();
+		mContacts = new ArrayList<ContactEvent>();
 		
 		setContentView(R.layout.activity_layout_calendar);
 		
-		mAdapter = new CalendarEventAdapter(this, R.layout.row_layout_calendar_event, 
-													mSortedLookupKeys, Event.TYPE_BIRTHDAY);
+		mAdapter = new CalendarEventAdapter(this, R.layout.row_layout_calendar_event, mContacts);
 
 		mAdapter.setRemoveButtonClickHandler(new View.OnClickListener() {
 			
@@ -68,9 +66,9 @@ public class CalendarEventActivity extends ListActivity {
 			public void onClick(View v) {
 				ImageButton removeBtn = (ImageButton)v;
 				int position = (Integer) removeBtn.getTag(R.id.list_row_position);
-				String lookupKey = mSortedLookupKeys.removeSorted(position);
-				mDBHelper.removeContactEvents(lookupKey);
-				mAdapter.notifyDataSetChanged();
+				ContactEvent removeContact = mAdapter.getItem(position);
+				mDBHelper.removeContactEvents(removeContact.getLookupKey());
+				mAdapter.remove(removeContact);
 			}
 		});		
 		
@@ -81,16 +79,17 @@ public class CalendarEventActivity extends ListActivity {
 	protected void onStart() {
 	    super.onStart();	    
 	    
-	    mSortedLookupKeys.clearSorted();
+	    mAdapter.clear();
 	    
 	    List<String> lookupKeys = mDBHelper.getAllContactEvents();
 	    
 	    for (String lookupKey: lookupKeys) {
-	    	String displayName = getDisplayName(lookupKey);
-	    	mSortedLookupKeys.insertSorted(lookupKey, displayName);
-	    }	    
-	    
-	    mAdapter.notifyDataSetChanged();
+	    	ContactEvent contact = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
+	    	contact.populate(this);
+	    	mAdapter.add(contact);
+	    }  
+	    mAdapter.sort(ContactEvent.CompareName);
+
 	}
 	
 	@Override
@@ -160,34 +159,14 @@ public class CalendarEventActivity extends ListActivity {
 	    if (lookupKey != null) {
 	    	mDBHelper.addContactEvents(lookupKey);
 
-	    	String displayName = getDisplayName(lookupKey);
-	    	mSortedLookupKeys.insertSorted(lookupKey, displayName);
+	    	ContactEvent contact = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
+	    	contact.populate(this);
 	    	
-	    	mAdapter.notifyDataSetChanged();
+	    	mAdapter.add(contact);
+	    	mAdapter.sort(ContactEvent.CompareName);
 	    }
     }
-    
-    private String getDisplayName(String lookupKey) {
-    	
-    	String displayName = null;    	
-		Cursor c = null;
-		
-		ContentResolver contentResolver = getContentResolver();
-		try {
-			Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-			c = contentResolver.query(contactUri, null, null, null, null);
-			if (c.moveToFirst()) {
-				int displayNameColIndex = c.getColumnIndex(Contacts.DISPLAY_NAME_PRIMARY);
-				displayName = c.getString(displayNameColIndex);				
-			}
-		} finally {
-			if (c != null)
-				c.close();
-		}
-
-		return displayName;    	
-    }    
-    
+        
     private String getLookupKeyFromUri(Uri contactUri) {
     	String lookupKey = null;    	
     	Cursor c = getContentResolver().query(contactUri, null, null, null, null);      	 
