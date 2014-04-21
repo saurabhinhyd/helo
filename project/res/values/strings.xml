@@ -16,7 +16,9 @@
     <string name="never">Never</string>
     <string name="today">Today</string>
     <string name="a_day_ago">A day ago</string>
-    <string name="days_ago">days ago</string>    
+    <string name="days_ago">days ago</string>
+    
+    <string name="birthdays_today">Birthdays today</string>
     
     <!-- Contact Group Activity -->
     <string name="action_add_contact">Add contact</string>

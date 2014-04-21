@@ -1,5 +1,6 @@
 package com.kaju.helo;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import android.content.ContentResolver;
@@ -33,6 +34,13 @@ public class ContactScore {
 	
 	private String mThumbnail;
 	
+	public static Comparator<ContactScore> ContactScoreDesc = new Comparator<ContactScore>() {
+		
+		@Override
+		public int compare(ContactScore o1, ContactScore o2) {
+			return Double.compare(o2.getScore(), o1.getScore());
+		}			
+	};
 	
 	public ContactScore(String lookupKey) {
 		mLookupKey = lookupKey;		

@@ -1,8 +1,10 @@
 package com.kaju.helo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -10,12 +12,16 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.kaju.helo.calendar.CalendarEventActivity;
+import com.kaju.helo.calendar.ContactEvent;
 //import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.groups.ContactGroupsActivity;
 import com.kaju.helo.groups.PrefsDBHelper;
@@ -23,24 +29,27 @@ import com.kaju.helo.notify.NotificationScheduler;
 import com.kaju.helo.settings.SettingsActivity;
 
 public class ContactReminderActivity extends ListActivity {
-
-	
-	class ContactScoreDesc implements Comparator<ContactScore> {
-		@Override
-		public int compare(ContactScore o1, ContactScore o2) {
-			return Double.compare(o2.getScore(), o1.getScore());
-		}			
-	}
-	
 	ArrayList<ContactScore> mContactList;
 	
-	ContactScoreRowAdapter mAdapter; 
+	ContactScoreRowAdapter mAdapter;
+	
+	ListView mEventsTodayListView;
+	ArrayList<ContactEvent> mContactEventsList;
+	EventsTodayAdapter mEventsTodayAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_layout_contact_reminder);
+		
+		View birthdayHeader = getLayoutInflater().inflate(R.layout.header_layout_events_today, null);
+		mEventsTodayListView = (ListView) findViewById(R.id.eventsTodayList);		
+		mEventsTodayListView.addHeaderView(birthdayHeader);
+		mContactEventsList = new ArrayList<ContactEvent>();
+		mEventsTodayAdapter = new EventsTodayAdapter(this, R.layout.row_layout_events_today, 
+														mContactEventsList); 
+		mEventsTodayListView.setAdapter(mEventsTodayAdapter);
 		
 		mContactList = new ArrayList<ContactScore>();
 				
@@ -78,17 +87,33 @@ public class ContactReminderActivity extends ListActivity {
 	protected void onStart() {
 	    super.onStart(); 
 	    
-	    mContactList.clear();
+	    PrefsDBHelper db = new PrefsDBHelper(this);	    
 	    
-		PrefsDBHelper db = new PrefsDBHelper(this);
+	    mEventsTodayAdapter.clear();
+	    for (String lookupKey : db.getAllContactEvents()) {
+	    	ContactEvent event = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
+	    	event.populate(this);
+	    	if (filter(event)) {
+	    		mEventsTodayAdapter.add(event);
+	    	}
+	    }
+
+    	mEventsTodayAdapter.sort(ContactEvent.CompareName);
+    	
+	    if (mEventsTodayAdapter.getCount() > 0) {
+	    	mEventsTodayListView.setVisibility(View.VISIBLE);
+	    } else {
+	    	mEventsTodayListView.setVisibility(View.GONE);
+	    }
+	    
+	    mAdapter.clear();
 		for (String lookupKey : db.getAllContacts()) {
 			ContactScore contactScore = new ContactScore(lookupKey);
 			contactScore.populate(this);
-			mContactList.add(contactScore);
+			mAdapter.add(contactScore);
 		}
 		
-		Collections.sort(mContactList, new ContactScoreDesc());	    
-		mAdapter.notifyDataSetChanged();
+		mAdapter.sort(ContactScore.ContactScoreDesc);
 	}
 
 	@Override
@@ -147,7 +172,20 @@ public class ContactReminderActivity extends ListActivity {
 			NotificationScheduler notificationScheduler = NotificationScheduler.getInstance(this);
 			notificationScheduler.scheduleDailyAt(notificationHour, notificationMinute);
 			BootCompleteReceiver.enableBroadcastReceiver(this);			
-		}
-		    	
+		}		    	
+    }
+    
+    private boolean filter(ContactEvent event) {
+    	Date eventDate = event.getEventDate();
+    	if (eventDate == null)
+    		return false;
+    	
+    	Calendar eventCalendar = Calendar.getInstance();
+    	eventCalendar.setTime(eventDate);
+    	
+    	Calendar today = Calendar.getInstance();
+    	
+    	return today.get(Calendar.DAY_OF_MONTH) == eventCalendar.get(Calendar.DAY_OF_MONTH) &&
+    			today.get(Calendar.MONTH) == eventCalendar.get(Calendar.MONTH);
     }
 }
