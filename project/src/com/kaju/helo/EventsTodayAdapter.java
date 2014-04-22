@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kaju.helo.calendar.ContactEvent;
@@ -40,6 +41,17 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(mRowLayoutResource, parent, false);	
 		
+		switch (getCount()) {
+		case 1:
+			rowView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+															ViewGroup.LayoutParams.MATCH_PARENT));
+			break;
+		default:
+			int gridWidth = getPx(160);
+			rowView.setLayoutParams(new LinearLayout.LayoutParams(gridWidth,
+					ViewGroup.LayoutParams.MATCH_PARENT));
+		}
+		
 		ContactEvent contactEvent = this.mContacts.get(position);
 		
 		String displayName = contactEvent.getDisplayName();
@@ -56,4 +68,9 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 		
 		return rowView;
 	}
+	
+	public int getPx(int dimensionDp) {
+	    float density = mContext.getResources().getDisplayMetrics().density;
+	    return (int) (dimensionDp * density + 0.5f);
+	}	
 }
