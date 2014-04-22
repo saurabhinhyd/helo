@@ -2,17 +2,16 @@ package com.kaju.helo;
 
 import java.util.List;
 
-import com.kaju.helo.calendar.ContactEvent;
-
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.QuickContactBadge;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.kaju.helo.calendar.ContactEvent;
 
 public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 
@@ -28,13 +27,13 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 		mContext = context;
 		mRowLayoutResource = resource;
 		mContacts = values; 
+		mDialBtnClickListener = null;
 	}
 	
 	public void setDialButtonClickHandler(final View.OnClickListener onClickListener) {
 		this.mDialBtnClickListener = onClickListener;
 	}	
-		
-	
+			
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) mContext
@@ -43,25 +42,17 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 		
 		ContactEvent contactEvent = this.mContacts.get(position);
 		
-		// Contact photo thumbnail
-		QuickContactBadge contactBadge = (QuickContactBadge)rowView.findViewById(R.id.contactImageView);
-		Uri contactUri = contactEvent.getLookupUri();
-		contactBadge.assignContactUri(contactUri);
-		String thumbnail = contactEvent.getPhotoThumbnail();
-		if (thumbnail != null) {
-			Uri thumbnailUri = Uri.parse(thumbnail);
-			contactBadge.setImageURI(thumbnailUri);
-		}
-		
-		// Contact name
-		TextView nameLabel = (TextView)rowView.findViewById(R.id.contactNameTextView);
 		String displayName = contactEvent.getDisplayName();
-		nameLabel.setText(displayName);		
+		TextView textView = (TextView) rowView.findViewById(R.id.contactNameTextView);
+		textView.setText(displayName);
 		
-		// Dial button
-		ImageButton dialBtn = (ImageButton) rowView.findViewById(R.id.contactDialBtn);
-		dialBtn.setTag(R.id.contact_phone_number, contactEvent.getPhoneNumber());
-		dialBtn.setOnClickListener(this.mDialBtnClickListener);		
+		ImageView imgView = (ImageView) rowView.findViewById(R.id.contactPictureImageView);
+		String pictureUriString = contactEvent.getPhoto();
+		if (pictureUriString != null) {			
+			imgView.setImageURI(Uri.parse(pictureUriString));
+		}
+		imgView.setTag(R.id.contact_phone_number, contactEvent.getPhoneNumber());
+		imgView.setOnClickListener(this.mDialBtnClickListener);	
 		
 		return rowView;
 	}

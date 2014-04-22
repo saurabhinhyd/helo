@@ -25,6 +25,7 @@ public class ContactEvent {
 	private String mDisplayName;
 	private Date mEventDate;
 	private String mThumbnail;
+	private String mPhotoUri;
 	private String mPhoneNumber;
 	
 	public static Comparator<ContactEvent> CompareName = 
@@ -45,6 +46,10 @@ public class ContactEvent {
 	public String getLookupKey() {
 		return mLookupKey;
 	}
+	
+	public int getEventType() {
+		return mEventType;
+	}
 
 	public Uri getLookupUri() {
 		return Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, mLookupKey);
@@ -62,6 +67,10 @@ public class ContactEvent {
 		return mThumbnail;
 	}	
 
+	public String getPhoto() {
+		return mPhotoUri;
+	}
+	
 	public Date getEventDate() {
 		return mEventDate;
 	}
@@ -78,11 +87,13 @@ public class ContactEvent {
 			if (c.moveToFirst()) {
 				int displayNameColIndex = c.getColumnIndex(Contacts.DISPLAY_NAME_PRIMARY);				
 				int photoThumbnailColIndex = c.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI);
+				int photoUriColIndex = c.getColumnIndex(Contacts.PHOTO_URI);				
 				int idColIndex = c.getColumnIndex(BaseColumns._ID);
 
 				mDisplayName = c.getString(displayNameColIndex);
 				contactId = c.getString(idColIndex);
 				mThumbnail = c.getString(photoThumbnailColIndex);
+				mPhotoUri = c.getString(photoUriColIndex);
 			}
 
 			String queryString = Data.CONTACT_ID + "=?" + " AND "

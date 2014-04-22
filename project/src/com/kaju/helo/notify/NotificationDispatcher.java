@@ -1,5 +1,7 @@
 package com.kaju.helo.notify;
 
+import com.kaju.helo.calendar.ContactEvent;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -22,5 +24,15 @@ public class NotificationDispatcher {
 		if (notification != null) {
 			notifyMgr.notify(NOTIFICATION_ID, notification);
 		}
+	}
+	
+	public void dispatchCalendarNotification(Notification notification, ContactEvent event) {
+		NotificationManager notifyMgr = 
+		        (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		
+		// Builds the notification and issues it.
+		if (notification != null) {
+			notifyMgr.notify(event.getLookupKey(), event.getEventType(), notification);
+		}		
 	}
 }

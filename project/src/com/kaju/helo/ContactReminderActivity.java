@@ -2,8 +2,6 @@ package com.kaju.helo;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 
 import android.app.ListActivity;
@@ -16,13 +14,11 @@ import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 
 import com.kaju.helo.calendar.CalendarEventActivity;
 import com.kaju.helo.calendar.ContactEvent;
-//import com.kaju.helo.notify.TestNotifications;
 import com.kaju.helo.groups.ContactGroupsActivity;
 import com.kaju.helo.groups.PrefsDBHelper;
 import com.kaju.helo.notify.NotificationScheduler;
@@ -33,9 +29,12 @@ public class ContactReminderActivity extends ListActivity {
 	
 	ContactScoreRowAdapter mAdapter;
 	
-	ListView mEventsTodayListView;
+	HorizontalScrollView mEventsTodayHScrollView;
+	LinearLayout mEventsTodayLinearLayout;
 	ArrayList<ContactEvent> mContactEventsList;
 	EventsTodayAdapter mEventsTodayAdapter;
+	
+	View.OnClickListener onCallContact;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,28 +42,28 @@ public class ContactReminderActivity extends ListActivity {
 		
 		setContentView(R.layout.activity_layout_contact_reminder);
 		
-		View birthdayHeader = getLayoutInflater().inflate(R.layout.header_layout_events_today, null);
-		mEventsTodayListView = (ListView) findViewById(R.id.eventsTodayList);		
-		mEventsTodayListView.addHeaderView(birthdayHeader);
-		mContactEventsList = new ArrayList<ContactEvent>();
-		mEventsTodayAdapter = new EventsTodayAdapter(this, R.layout.row_layout_events_today, 
-														mContactEventsList); 
-		mEventsTodayListView.setAdapter(mEventsTodayAdapter);
-		
-		mContactList = new ArrayList<ContactScore>();
-				
-		mAdapter = new ContactScoreRowAdapter(this, mContactList);
-		mAdapter.setDialButtonClickHandler(new View.OnClickListener() {
+		onCallContact = new View.OnClickListener() {
 			
 			@Override
-			public void onClick(View v) {
-				ImageButton dialBtn = (ImageButton)v;
-				String phoneNumber = (String) dialBtn.getTag(R.id.contact_phone_number);
+			public void onClick(View v) {				
+				String phoneNumber = (String) v.getTag(R.id.contact_phone_number);
 				
 		    	Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
 		    	startActivity(intent);    				
 			}
-		});
+		};
+		
+		mEventsTodayHScrollView = (HorizontalScrollView) findViewById(R.id.eventsTodayHScroll);
+		mEventsTodayLinearLayout = (LinearLayout) findViewById(R.id.eventsTodayList);		
+		mContactEventsList = new ArrayList<ContactEvent>();
+		mEventsTodayAdapter = new EventsTodayAdapter(this, R.layout.row_layout_events_today, 
+														mContactEventsList);
+		mEventsTodayAdapter.setDialButtonClickHandler(onCallContact);
+		
+		mContactList = new ArrayList<ContactScore>();
+				
+		mAdapter = new ContactScoreRowAdapter(this, mContactList);
+		mAdapter.setDialButtonClickHandler(onCallContact);
 		
 		setListAdapter(mAdapter);
 
@@ -90,20 +89,26 @@ public class ContactReminderActivity extends ListActivity {
 	    PrefsDBHelper db = new PrefsDBHelper(this);	    
 	    
 	    mEventsTodayAdapter.clear();
+	    mEventsTodayLinearLayout.removeAllViews();
 	    for (String lookupKey : db.getAllContactEvents()) {
 	    	ContactEvent event = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
 	    	event.populate(this);
-	    	if (filter(event)) {
-	    		mEventsTodayAdapter.add(event);
-	    	}
+//	    	if (filter(event)) {
+	    		mEventsTodayAdapter.add(event);	    		
+//	    	}
 	    }
-
     	mEventsTodayAdapter.sort(ContactEvent.CompareName);
     	
 	    if (mEventsTodayAdapter.getCount() > 0) {
-	    	mEventsTodayListView.setVisibility(View.VISIBLE);
+	    	mEventsTodayHScrollView.setVisibility(View.VISIBLE);
+	    	
+	    	for (int index = 0; index < mEventsTodayAdapter.getCount(); index++) {
+	    		View v = mEventsTodayAdapter.getView(index, null, mEventsTodayLinearLayout);
+	    		mEventsTodayLinearLayout.addView(v);
+	    	}
+	    	
 	    } else {
-	    	mEventsTodayListView.setVisibility(View.GONE);
+	    	mEventsTodayHScrollView.setVisibility(View.GONE);
 	    }
 	    
 	    mAdapter.clear();
