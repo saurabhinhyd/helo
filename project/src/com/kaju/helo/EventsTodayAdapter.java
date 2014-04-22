@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.net.Uri;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,10 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 		
 		ContactEvent contactEvent = this.mContacts.get(position);
 		
+		String eventLabel = getEventLabel(contactEvent);
+		TextView eventTypeTextView = (TextView) rowView.findViewById(R.id.eventNameTextView);
+		eventTypeTextView.setText(eventLabel);
+		
 		String displayName = contactEvent.getDisplayName();
 		TextView textView = (TextView) rowView.findViewById(R.id.contactNameTextView);
 		textView.setText(displayName);
@@ -73,4 +78,18 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 	    float density = mContext.getResources().getDisplayMetrics().density;
 	    return (int) (dimensionDp * density + 0.5f);
 	}	
+	
+	public String getEventLabel(ContactEvent event) {
+		String eventLabel = "";
+		switch (event.getEventType()) {
+		case Event.TYPE_BIRTHDAY:
+			eventLabel = mContext.getResources().getString(R.string.event_type_birthday);
+			break;
+		case Event.TYPE_ANNIVERSARY:
+			break;
+		case Event.TYPE_OTHER:
+			break;
+		}
+		return eventLabel;
+	}
 }
