@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,8 +89,7 @@ public class ContactReminderActivity extends ListActivity {
 	    
 	    mEventsTodayAdapter.clear();
 	    mEventsTodayLinearLayout.removeAllViews();
-	    for (String lookupKey : db.getAllContactEvents()) {
-	    	ContactEvent event = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
+	    for (ContactEvent event : db.getAllContactEvents()) {	    	
 	    	event.populate(this);
 //	    	if (filter(event)) {
 	    		mEventsTodayAdapter.add(event);	    		

@@ -67,7 +67,7 @@ public class CalendarEventActivity extends ListActivity {
 				ImageButton removeBtn = (ImageButton)v;
 				int position = (Integer) removeBtn.getTag(R.id.list_row_position);
 				ContactEvent removeContact = mAdapter.getItem(position);
-				mDBHelper.removeContactEvents(removeContact.getLookupKey());
+				mDBHelper.removeContactEvent(removeContact);
 				mAdapter.remove(removeContact);
 			}
 		});		
@@ -79,14 +79,11 @@ public class CalendarEventActivity extends ListActivity {
 	protected void onStart() {
 	    super.onStart();	    
 	    
-	    mAdapter.clear();
-	    
-	    List<String> lookupKeys = mDBHelper.getAllContactEvents();
-	    
-	    for (String lookupKey: lookupKeys) {
-	    	ContactEvent contact = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
-	    	contact.populate(this);
-	    	mAdapter.add(contact);
+	    mAdapter.clear();	    
+	    	    
+	    for (ContactEvent contactEvnt : mDBHelper.getAllContactEventsOfType(Event.TYPE_BIRTHDAY)) {
+	    	contactEvnt.populate(this);	    	 
+	    	mAdapter.add(contactEvnt);
 	    }  
 	    mAdapter.sort(ContactEvent.CompareName);
 
@@ -157,12 +154,11 @@ public class CalendarEventActivity extends ListActivity {
     private void doImportFromContact(Uri contactUri) {
     	String lookupKey = getLookupKeyFromUri(contactUri);
 	    if (lookupKey != null) {
-	    	mDBHelper.addContactEvents(lookupKey);
-
-	    	ContactEvent contact = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
-	    	contact.populate(this);
+	    	ContactEvent contactEvnt = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
+	    	contactEvnt.populate(this);
 	    	
-	    	mAdapter.add(contact);
+	    	mDBHelper.addContactEvent(contactEvnt);
+	    	mAdapter.add(contactEvnt);
 	    	mAdapter.sort(ContactEvent.CompareName);
 	    }
     }

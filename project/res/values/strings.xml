@@ -72,5 +72,7 @@
     <string name="pending_calls">pending calls</string>
     <string name="action_call">Call</string>
     <string name="event_type_birthday">Birthday</string>
+    <string name="event_type_anniversary">Anniversary</string>
+    <string name="event_type_other">Other event</string>
 
 </resources>

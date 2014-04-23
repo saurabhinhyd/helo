@@ -86,8 +86,10 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 			eventLabel = mContext.getResources().getString(R.string.event_type_birthday);
 			break;
 		case Event.TYPE_ANNIVERSARY:
+			eventLabel = mContext.getResources().getString(R.string.event_type_anniversary);
 			break;
 		case Event.TYPE_OTHER:
+			eventLabel = mContext.getResources().getString(R.string.event_type_other);
 			break;
 		}
 		return eventLabel;
