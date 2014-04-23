@@ -13,17 +13,20 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_action_contact" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
         android:background="@color/grey_transparent" >
     
 	    <TextView
 	        android:id="@+id/contactNameTextView"
-	        android:layout_width="125dp"
+	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
 	        android:layout_margin="6dp"
+	        android:layout_weight="2"
 	        android:maxLines="1"
 	        android:text="Contact name"
 	        android:textAppearance="?android:attr/textAppearanceMedium"
@@ -31,13 +34,13 @@
 	    
 	    <ImageButton
 	        android:id="@+id/contactRemoveBtn"
+	        android:layout_gravity="center_vertical"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
+	        android:layout_height="wrap_content"	        
 	        android:background="@null"
 	        android:src="@drawable/ic_action_remove_dark" />
 	
-	</RelativeLayout>
+	</LinearLayout>
 
 
 	
