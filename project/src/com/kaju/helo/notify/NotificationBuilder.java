@@ -69,6 +69,10 @@ public class NotificationBuilder {
 		PendingIntent piCallIntent = PendingIntent.getActivity(mContext, 0, callIntent, 0);		
 		mBuilder.addAction(R.drawable.ic_action_call_dark, getString(R.string.action_call), piCallIntent);
 
+		Intent messageIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + contactScore.getPhoneNumber()));
+		PendingIntent piMssgIntent = PendingIntent.getActivity(mContext, 0, messageIntent, 0);		
+		mBuilder.addAction(R.drawable.ic_action_message_dark, "Message", piMssgIntent);
+	
 		mBuilder.setContentIntent(buildContentIntent());		
 		
 		return mBuilder.build();		
