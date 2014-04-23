@@ -1,12 +1,11 @@
 package com.kaju.helo;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -91,9 +90,9 @@ public class ContactReminderActivity extends ListActivity {
 	    mEventsTodayLinearLayout.removeAllViews();
 	    for (ContactEvent event : db.getAllContactEvents()) {	    	
 	    	event.populate(this);
-//	    	if (filter(event)) {
+	    	if (filter(event)) {
 	    		mEventsTodayAdapter.add(event);	    		
-//	    	}
+	    	}
 	    }
     	mEventsTodayAdapter.sort(ContactEvent.CompareName);
     	
@@ -179,16 +178,11 @@ public class ContactReminderActivity extends ListActivity {
     }
     
     private boolean filter(ContactEvent event) {
-    	Date eventDate = event.getEventDate();
-    	if (eventDate == null)
-    		return false;
-    	
-    	Calendar eventCalendar = Calendar.getInstance();
-    	eventCalendar.setTime(eventDate);
-    	
-    	Calendar today = Calendar.getInstance();
-    	
-    	return today.get(Calendar.DAY_OF_MONTH) == eventCalendar.get(Calendar.DAY_OF_MONTH) &&
-    			today.get(Calendar.MONTH) == eventCalendar.get(Calendar.MONTH);
+		boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );		
+		if (isDebuggable) {
+			return true;
+		} else {    	
+			return ContactEvent.isToday(event);
+		}
     }
 }

@@ -1,12 +1,11 @@
 package com.kaju.helo;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 
 import com.kaju.helo.calendar.ContactEvent;
 import com.kaju.helo.groups.PrefsDBHelper;
@@ -56,17 +55,12 @@ public class ContactReminderService extends IntentService {
 	}	
 	
 	private boolean filterEvent(ContactEvent event) {
-		Date eventDate = event.getEventDate();
-    	if (eventDate == null)
-    		return false;
-    	
-    	Calendar eventCalendar = Calendar.getInstance();
-    	eventCalendar.setTime(eventDate);
-    	
-    	Calendar today = Calendar.getInstance();
-    	
-    	return today.get(Calendar.DAY_OF_MONTH) == eventCalendar.get(Calendar.DAY_OF_MONTH) &&
-    			today.get(Calendar.MONTH) == eventCalendar.get(Calendar.MONTH);		
+		boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );		
+		if (isDebuggable) {
+			return true;
+		} else {
+			return ContactEvent.isToday(event);
+		}
 	}
 	
 	private void fireNotification(List<ContactScore> contactList) {

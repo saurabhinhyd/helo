@@ -1,6 +1,7 @@
 package com.kaju.helo.calendar;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
@@ -38,6 +39,20 @@ public class ContactEvent {
 		
 	};
 
+	public static boolean isToday(ContactEvent event) {
+    	Date eventDate = event.getEventDate();
+    	if (eventDate == null)
+    		return false;
+    	
+    	Calendar eventCalendar = Calendar.getInstance();
+    	eventCalendar.setTime(eventDate);
+    	
+    	Calendar today = Calendar.getInstance();
+    	
+    	return today.get(Calendar.DAY_OF_MONTH) == eventCalendar.get(Calendar.DAY_OF_MONTH) &&
+    			today.get(Calendar.MONTH) == eventCalendar.get(Calendar.MONTH);		
+	}
+	
 	public ContactEvent(String lookupKey, int eventType) {
 		mLookupKey = lookupKey;
 		mEventType = eventType;
