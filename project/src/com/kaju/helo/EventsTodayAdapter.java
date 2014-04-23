@@ -42,16 +42,14 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(mRowLayoutResource, parent, false);	
 		
-		switch (getCount()) {
-		case 1:
-			rowView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-															ViewGroup.LayoutParams.MATCH_PARENT));
-			break;
-		default:
-			int gridWidth = getPx(160);
-			rowView.setLayoutParams(new LinearLayout.LayoutParams(gridWidth,
-					ViewGroup.LayoutParams.MATCH_PARENT));
+		int gridWidth = ViewGroup.LayoutParams.MATCH_PARENT;
+		int gridHeight = ViewGroup.LayoutParams.MATCH_PARENT;
+		
+		if (getCount() > 1) {
+			gridWidth = getPx(160);
 		}
+		
+		rowView.setLayoutParams(new LinearLayout.LayoutParams(gridWidth, gridHeight));
 		
 		ContactEvent contactEvent = this.mContacts.get(position);
 		
