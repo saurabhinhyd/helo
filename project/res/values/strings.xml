@@ -25,6 +25,7 @@
     <string name="action_edit_group">Edit Group</string>
     <string name="action_delete_group">Delete Group</string>
     <string name="empty_group_primary_text">No people in this group.</string>    
+    <string name="add_contact_failed">Could not add contact to group</string>
     
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>

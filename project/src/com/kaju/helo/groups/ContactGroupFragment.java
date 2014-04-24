@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.kaju.helo.ContactInfo;
 import com.kaju.helo.R;
 
-public class ContactGroupFragment extends Fragment { //ListFragment {	
+public class ContactGroupFragment extends Fragment { 	
 	
-	private List<String> mContactLookupList;
+	private List<ContactInfo> mContactList;
 	
 	private ContactGroupsRowAdapter mAdapter;
 	
@@ -41,35 +43,48 @@ public class ContactGroupFragment extends Fragment { //ListFragment {
 	
 	
 	public void addContact(String lookupKey) {
-		if (!mContactLookupList.contains(lookupKey)) {	
-			long groupId = getContactGroupId();
-			if (mPrefs.addContact(lookupKey, groupId) == 1) { // try adding user to group 
-				mContactLookupList.add(lookupKey);
-				mAdapter.notifyDataSetChanged();
-			} else if (mPrefs.updateContact(lookupKey, groupId) == 1) { // maybe user is already part of some other group. in that case, do an update
-				mContactLookupList.add(lookupKey);
-				mAdapter.notifyDataSetChanged();			
-			} else { // if both add and update failed, do nothing 
-				System.out.println("Could not add contact to group");
-			}
+		ContactInfo contact = new ContactInfo(lookupKey);
+		long groupId = getContactGroupId();
+		
+		boolean bAdded = false, bUpdated = false;
+		
+		if (mPrefs.addContact(lookupKey, groupId) == 1) { // try adding user to group
+			bAdded = true;
 		}
+		
+		if (!bAdded && mPrefs.updateContact(lookupKey, groupId) == 1) {
+			bUpdated = true;
+		}
+		
+		if (bAdded || bUpdated) {
+			contact.populate(getActivity());
+			mAdapter.add(contact);
+			mAdapter.sort(ContactInfo.CompareName);			
+		} else {
+			Toast.makeText(getActivity(), R.string.add_contact_failed, Toast.LENGTH_SHORT).show();
+		}		
 	}
 	
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         
-		if (mContactLookupList == null) {
-			mContactLookupList = new ArrayList<String>();
+		if (mContactList == null) {
+			mContactList = new ArrayList<ContactInfo>();
 		} else { 
-			mContactLookupList.clear();
+			mContactList.clear();
 		}        
         
 		mPrefs = new PrefsDBHelper(getActivity());
 		
-		mContactLookupList = mPrefs.getContacts(getContactGroupId());
+		for (String lookupKey : mPrefs.getContacts(getContactGroupId())) {
+			ContactInfo contact = new ContactInfo(lookupKey);		
+			contact.populate(getActivity());
+			mContactList.add(contact);
+		}		
                 
-        mAdapter = new ContactGroupsRowAdapter(getActivity(), mContactLookupList);
+        mAdapter = new ContactGroupsRowAdapter(getActivity(), mContactList);
+        mAdapter.sort(ContactInfo.CompareName);
         
         mAdapter.setRemoveButtonClickHandler(new View.OnClickListener() {
 			
@@ -77,16 +92,13 @@ public class ContactGroupFragment extends Fragment { //ListFragment {
 			public void onClick(View v) {
 				ImageButton removeBtn = (ImageButton)v;
 				int position = (Integer) removeBtn.getTag(R.id.list_row_position);
-				String key = mContactLookupList.remove(position);
-				mPrefs.removeContact(key);
-				mAdapter.notifyDataSetChanged();
+				ContactInfo removeContact = mAdapter.getItem(position);
+				mAdapter.remove(removeContact);				
+				mPrefs.removeContact(removeContact.getLookupKey());				
 			}
 		});
         
-//        setListAdapter(mAdapter);
-        
-        mGrid.setAdapter(mAdapter);
-        
+        mGrid.setAdapter(mAdapter);        
 	}
 
     @Override
