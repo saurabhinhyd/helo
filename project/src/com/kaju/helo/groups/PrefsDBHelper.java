@@ -40,10 +40,6 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CONTACT_LOOKUPKEY = "lookupKey";
     private static final String COLUMN_CONTACT_GROUP_ID = "groupId";
     
-    // ContactEvents table name
-    private static final String TABLE_CONTACTEVENTS = "contact_events";
-    private static final String COLUMN_CONTACTEVENTS_LOOKUPKEY = "lookupKey";
-    
 	public PrefsDBHelper(Context ctx) {
 		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
 		
@@ -90,21 +86,12 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
         
         addContactGroup(dailyStr, new CallFrequency(1, CallFrequency.DAYS), db);
         addContactGroup(weeklyStr, new CallFrequency(1, CallFrequency.WEEKS), db);
-        addContactGroup(monthlyStr, new CallFrequency(1, CallFrequency.MONTHS), db);
-        
-		// tables created since version 2        
-        String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
-        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY)";
-        db.execSQL(CREATE_CONTACTEVENTS_TABLE);        
+        addContactGroup(monthlyStr, new CallFrequency(1, CallFrequency.MONTHS), db);     
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (oldVersion < 2) { 
-	        String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
-	        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY)";
-	        db.execSQL(CREATE_CONTACTEVENTS_TABLE);
-		}		
+	
 	}
 	
 	public List<String> getContacts(long groupId) {
@@ -314,40 +301,5 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	    db.close();
 	    
 	    return rowsDeleted;
-	}
-	
-	public void addContactToEvents(String lookupKey) {		
-		ContentValues values = new ContentValues();
-		values.put(COLUMN_CONTACTEVENTS_LOOKUPKEY, lookupKey);
-		
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.insertOrThrow(TABLE_CONTACTEVENTS, null, values);
-		db.close();
-	}
-	
-	public List<String> getAllContactsFromEvents() {
-		List<String> lookupKeys = new ArrayList<String>();	
-
-		SQLiteDatabase db = this.getReadableDatabase();
-		
-		try {
-		    Cursor cursor = db.query(TABLE_CONTACTEVENTS, null, null, null, null, null, null, null);
-		    
-		    int lookupKeyColIndex = cursor.getColumnIndex(COLUMN_CONTACTEVENTS_LOOKUPKEY);
-		    
-		    while (cursor.moveToNext()) {
-		    	lookupKeys.add(cursor.getString(lookupKeyColIndex));
-		    }
-		} finally {
-			db.close();
-		}
-		 
-		return lookupKeys;		
-	}	
-	
-	public void removeContactFromEvents(String lookupKey) {		
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_CONTACTEVENTS, COLUMN_CONTACTEVENTS_LOOKUPKEY + "=?", new String[]{lookupKey});
-		db.close();
 	}
 }

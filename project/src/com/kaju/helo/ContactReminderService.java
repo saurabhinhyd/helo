@@ -7,7 +7,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 
-import com.kaju.helo.calendar.ContactEvent;
 import com.kaju.helo.groups.PrefsDBHelper;
 import com.kaju.helo.notify.CalendarNotificationBuilder;
 import com.kaju.helo.notify.NotificationBuilder;
@@ -44,7 +43,7 @@ public class ContactReminderService extends IntentService {
 		fireNotification(contactList);
 		
 		ArrayList<ContactEvent> contactEvents = new ArrayList<ContactEvent>();
-	    for (String lookupKey : db.getAllContactsFromEvents()) {
+	    for (String lookupKey : db.getAllContacts()) {
 	    	for (ContactEvent event : ContactEvent.getAllEventsForContact(this, lookupKey)) {
 		    	if (filterEvent(event)) {
 		    		contactEvents.add(event);	    		

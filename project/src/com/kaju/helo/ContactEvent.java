@@ -1,4 +1,4 @@
-package com.kaju.helo.calendar;
+package com.kaju.helo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Data;
 
-import com.kaju.helo.ContactInfo;
 
 public class ContactEvent {	
 

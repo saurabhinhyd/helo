@@ -14,10 +14,10 @@ import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.kaju.helo.ContactEvent;
 import com.kaju.helo.ContactInfo;
 import com.kaju.helo.ContactReminderActivity;
 import com.kaju.helo.R;
-import com.kaju.helo.calendar.ContactEvent;
 
 public class CalendarNotificationBuilder {
 

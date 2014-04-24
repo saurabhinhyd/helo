@@ -1,6 +1,6 @@
 package com.kaju.helo.notify;
 
-import com.kaju.helo.calendar.ContactEvent;
+import com.kaju.helo.ContactEvent;
 
 import android.app.Notification;
 import android.app.NotificationManager;
