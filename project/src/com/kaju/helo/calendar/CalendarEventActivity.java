@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.kaju.helo.ContactInfo;
 import com.kaju.helo.R;
 import com.kaju.helo.groups.ContactGroup;
 import com.kaju.helo.groups.PrefsDBHelper;
@@ -85,7 +86,7 @@ public class CalendarEventActivity extends ListActivity {
 	    	contactEvnt.populate(this);	    	 
 	    	mAdapter.add(contactEvnt);
 	    }  
-	    mAdapter.sort(ContactEvent.CompareName);
+	    mAdapter.sort(ContactInfo.CompareName);
 
 	}
 	

@@ -94,7 +94,7 @@ public class ContactReminderActivity extends ListActivity {
 	    		mEventsTodayAdapter.add(event);	    		
 	    	}
 	    }
-    	mEventsTodayAdapter.sort(ContactEvent.CompareName);
+    	mEventsTodayAdapter.sort(ContactInfo.CompareName);
     	
 	    if (mEventsTodayAdapter.getCount() > 0) {
 	    	mEventsTodayHScrollView.setVisibility(View.VISIBLE);

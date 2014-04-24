@@ -54,7 +54,7 @@ class ContactScoreRowAdapter extends ArrayAdapter<ContactScore> {
 		
 		// Target frequency
 		TextView targetLabel = (TextView) rowView.findViewById(R.id.targetFreqTextView);
-		targetLabel.setText("[" + contactScore.getTargetLabel() + "]");
+		targetLabel.setText("[" + contactScore.getContactGroup().getLabel() + "]");
 		
 		// Score Image
 		ImageView scoreImage = (ImageView)rowView.findViewById(R.id.scoreImageView);
