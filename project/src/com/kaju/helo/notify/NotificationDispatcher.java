@@ -32,7 +32,9 @@ public class NotificationDispatcher {
 		
 		// Builds the notification and issues it.
 		if (notification != null) {
-			notifyMgr.notify(event.getLookupKey(), event.getEventType(), notification);
+			String tag = event.getContact().getLookupKey();
+			int id = event.getEventType();
+			notifyMgr.notify(tag, id, notification);
 		}		
 	}
 }

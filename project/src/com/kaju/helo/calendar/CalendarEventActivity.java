@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Contacts;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +46,7 @@ public class CalendarEventActivity extends ListActivity {
 	
 	private CalendarEventAdapter mAdapter;
 	
-	private ArrayList<ContactEvent> mContacts;
+	private ArrayList<ContactInfo> mContacts;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +54,7 @@ public class CalendarEventActivity extends ListActivity {
 		
 		mDBHelper = new PrefsDBHelper(this);
 		
-		mContacts = new ArrayList<ContactEvent>();
+		mContacts = new ArrayList<ContactInfo>();
 		
 		setContentView(R.layout.activity_layout_calendar);
 		
@@ -67,8 +66,8 @@ public class CalendarEventActivity extends ListActivity {
 			public void onClick(View v) {
 				ImageButton removeBtn = (ImageButton)v;
 				int position = (Integer) removeBtn.getTag(R.id.list_row_position);
-				ContactEvent removeContact = mAdapter.getItem(position);
-				mDBHelper.removeContactEvent(removeContact);
+				ContactInfo removeContact = mAdapter.getItem(position);
+				mDBHelper.removeContactFromEvents(removeContact.getLookupKey());
 				mAdapter.remove(removeContact);
 			}
 		});		
@@ -82,9 +81,10 @@ public class CalendarEventActivity extends ListActivity {
 	    
 	    mAdapter.clear();	    
 	    	    
-	    for (ContactEvent contactEvnt : mDBHelper.getAllContactEventsOfType(Event.TYPE_BIRTHDAY)) {
-	    	contactEvnt.populate(this);	    	 
-	    	mAdapter.add(contactEvnt);
+	    for (String lookupKey : mDBHelper.getAllContactsFromEvents()) {
+	    	ContactInfo contact = new ContactInfo(lookupKey);
+	    	contact.populate(this);	    	 
+	    	mAdapter.add(contact);
 	    }  
 	    mAdapter.sort(ContactInfo.CompareName);
 
@@ -155,12 +155,12 @@ public class CalendarEventActivity extends ListActivity {
     private void doImportFromContact(Uri contactUri) {
     	String lookupKey = getLookupKeyFromUri(contactUri);
 	    if (lookupKey != null) {
-	    	ContactEvent contactEvnt = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
-	    	contactEvnt.populate(this);
+	    	ContactInfo contact = new ContactInfo(lookupKey);	    	
+	    	contact.populate(this);
 	    	
-	    	mDBHelper.addContactEvent(contactEvnt);
-	    	mAdapter.add(contactEvnt);
-	    	mAdapter.sort(ContactEvent.CompareName);
+	    	mDBHelper.addContactToEvents(lookupKey);
+	    	mAdapter.add(contact);
+	    	mAdapter.sort(ContactInfo.CompareName);
 	    }
     }
         

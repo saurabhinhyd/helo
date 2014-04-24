@@ -15,22 +15,24 @@
 	    android:id="@android:id/empty"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_margin="8dp"
+	    android:padding="16dp"
 	    android:gravity="center"
 	    android:orientation="vertical" >
 
 	    <Button
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="@string/action_import_groups"
-	        android:onClick="importFromContactGroups" />
+	        android:layout_margin="8dp"
+	        android:onClick="importFromContactGroups"
+	        android:text="@string/action_import_groups" />
 	    
-   	    <TextView        
-	      	android:gravity="center"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/empty_list_events"	        
-         	/>    
+   	    <TextView
+   	        android:layout_width="match_parent"
+   	        android:layout_height="wrap_content"
+   	        android:layout_margin="8dp"
+   	        android:gravity="center"
+   	        android:text="@string/empty_list_events" />
+    
 	</LinearLayout>    
 
 </RelativeLayout>

@@ -11,10 +11,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.provider.BaseColumns;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 
 import com.kaju.helo.R;
-import com.kaju.helo.calendar.ContactEvent;
 
 public class PrefsDBHelper extends SQLiteOpenHelper {	
 	
@@ -45,8 +43,6 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
     // ContactEvents table name
     private static final String TABLE_CONTACTEVENTS = "contact_events";
     private static final String COLUMN_CONTACTEVENTS_LOOKUPKEY = "lookupKey";
-    private static final String COLUMN_CONTACTEVENTS_BIRTHDAY = "birthday";
-    private static final String COLUMN_CONTACTEVENTS_ANNIVERSARY = "anniversary";
     
 	public PrefsDBHelper(Context ctx) {
 		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
@@ -98,9 +94,7 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
         
 		// tables created since version 2        
         String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
-        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY,"
-        		+ COLUMN_CONTACTEVENTS_BIRTHDAY + " BOOLEAN,"
-        		+ COLUMN_CONTACTEVENTS_ANNIVERSARY + " BOOLEAN)";
+        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY)";
         db.execSQL(CREATE_CONTACTEVENTS_TABLE);        
 	}
 
@@ -108,12 +102,9 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion < 2) { 
 	        String CREATE_CONTACTEVENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTEVENTS + "("
-	        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY,"
-	        		+ COLUMN_CONTACTEVENTS_BIRTHDAY + " BOOLEAN,"
-	        		+ COLUMN_CONTACTEVENTS_ANNIVERSARY + " BOOLEAN)";
+	        		+ COLUMN_CONTACTEVENTS_LOOKUPKEY + " TEXT PRIMARY KEY)";
 	        db.execSQL(CREATE_CONTACTEVENTS_TABLE);
-		}
-		
+		}		
 	}
 	
 	public List<String> getContacts(long groupId) {
@@ -325,127 +316,38 @@ public class PrefsDBHelper extends SQLiteOpenHelper {
 	    return rowsDeleted;
 	}
 	
-	private static String getEventColumnName(int eventType) {
-		String eventColumn = null;
-		switch (eventType) {
-		case Event.TYPE_BIRTHDAY:
-			eventColumn = COLUMN_CONTACTEVENTS_BIRTHDAY;
-			break;
-		case Event.TYPE_ANNIVERSARY:
-			eventColumn = COLUMN_CONTACTEVENTS_ANNIVERSARY;
-			break;
-		}
-		return eventColumn;
-	}
-	
-	public void addContactEvent(ContactEvent event) {		
+	public void addContactToEvents(String lookupKey) {		
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_CONTACTEVENTS_LOOKUPKEY, lookupKey);
 		
-		String eventColumn = getEventColumnName(event.getEventType());		
-		if (eventColumn != null) {					
-		
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			// first check if lookupKey row already exists
-		    Cursor cursor = db.query(TABLE_CONTACTEVENTS, 
-		    		new String[] { COLUMN_CONTACTEVENTS_LOOKUPKEY }, 
-		    		COLUMN_CONTACTEVENTS_LOOKUPKEY + " = ?", new String[] {event.getLookupKey()}, 
-		    		null, null, null, null);
-		    
-		    ContentValues values = new ContentValues();
-		    if (cursor.moveToFirst()) {
-		    	//row exists. do update
-		    	values.put(eventColumn, true);
-		    	db.update(TABLE_CONTACTEVENTS, values, 
-		    				COLUMN_CONTACTEVENTS_LOOKUPKEY + " = ?",
-		    				new String[] { String.valueOf(event.getLookupKey()) }
-		    			);
-		    } else {		    	
-		    	//row doesn't exist. do create				
-				values.put(COLUMN_CONTACTEVENTS_LOOKUPKEY, event.getLookupKey());
-				values.put(eventColumn, true);
-		    	db.insertOrThrow(TABLE_CONTACTEVENTS, null, values);
-		    }
-		    
-		    db.close();
-		}		
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.insertOrThrow(TABLE_CONTACTEVENTS, null, values);
+		db.close();
 	}
 	
-	public List<ContactEvent> getAllContactEventsOfType(int eventType) {
-		List<ContactEvent> contactEvents = new ArrayList<ContactEvent>();	
-
-		String eventColumn = getEventColumnName(eventType);		
-		if (eventColumn != null) {		
-			SQLiteDatabase db = this.getReadableDatabase();
-		    Cursor cursor = db.query(TABLE_CONTACTEVENTS, 
-		    		new String[] { COLUMN_CONTACTEVENTS_LOOKUPKEY }, 
-		    		eventColumn + " = 1", null, 
-		    		null, null, null, null);
-		    
-		    while (cursor.moveToNext()) {
-		    	String lookupKey = cursor.getString(0);
-		    	ContactEvent event = new ContactEvent(lookupKey, eventType);
-		    	contactEvents.add(event);
-		    }
-		    
-		    db.close();
-		} 
-		return contactEvents;		
-	}
-	
-	public List<ContactEvent> getAllContactEvents() {
-		List<ContactEvent> contactEvents = new ArrayList<ContactEvent>();	
+	public List<String> getAllContactsFromEvents() {
+		List<String> lookupKeys = new ArrayList<String>();	
 
 		SQLiteDatabase db = this.getReadableDatabase();
-	    Cursor cursor = db.query(TABLE_CONTACTEVENTS, 
-	    		null, 
-	    		null, null, 
-	    		null, null, null, null);
-	    
-	    int lookupKeyColIndex = cursor.getColumnIndex(COLUMN_CONTACTEVENTS_LOOKUPKEY);
-	    int birthdayColIndex = cursor.getColumnIndex(COLUMN_CONTACTEVENTS_BIRTHDAY);
-	    int anniversaryColIndex = cursor.getColumnIndex(COLUMN_CONTACTEVENTS_ANNIVERSARY);
-	    
-	    while (cursor.moveToNext()) {
-	    	String lookupKey = cursor.getString(lookupKeyColIndex);
-	    	
-	    	boolean birthday = cursor.getInt(birthdayColIndex) == 0 ? false : true;
-	    	boolean anniversary = cursor.getInt(anniversaryColIndex) == 0 ? false : true;
-	    	
-	    	if (birthday) { 
-	    		ContactEvent event = new ContactEvent(lookupKey, Event.TYPE_BIRTHDAY);
-	    		contactEvents.add(event);
-	    	}
-	    	
-	    	if (anniversary) {
-	    		ContactEvent event = new ContactEvent(lookupKey, Event.TYPE_ANNIVERSARY);
-	    		contactEvents.add(event);
-	    	}
-	    }
-	    
-	    db.close();
-		 
-		return contactEvents;		
-	}
-	
-	
-	public void removeContactEvent(ContactEvent event) {
-		String lookupKey = event.getLookupKey();
-		int eventType = event.getEventType();
-
-		String eventColumn = getEventColumnName(eventType);		
-		if (eventColumn != null) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			ContentValues values = new ContentValues();
-			values.put(eventColumn, false);
-			
-			db.update(TABLE_CONTACTEVENTS, values,
-					COLUMN_CONTACTEVENTS_LOOKUPKEY + " = ?",
-    				new String[] { String.valueOf(lookupKey) });
-			
-			//TODO - cleanup : delete row if all events for the given contact are removed
-			
-		    db.close();							
+		
+		try {
+		    Cursor cursor = db.query(TABLE_CONTACTEVENTS, null, null, null, null, null, null, null);
+		    
+		    int lookupKeyColIndex = cursor.getColumnIndex(COLUMN_CONTACTEVENTS_LOOKUPKEY);
+		    
+		    while (cursor.moveToNext()) {
+		    	lookupKeys.add(cursor.getString(lookupKeyColIndex));
+		    }
+		} finally {
+			db.close();
 		}
+		 
+		return lookupKeys;		
+	}	
+	
+	public void removeContactFromEvents(String lookupKey) {		
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_CONTACTEVENTS, COLUMN_CONTACTEVENTS_LOOKUPKEY + "=?", new String[]{lookupKey});
+		db.close();
 	}
 }

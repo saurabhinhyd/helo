@@ -9,11 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.MediaStore;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.kaju.helo.ContactInfo;
 import com.kaju.helo.ContactReminderActivity;
 import com.kaju.helo.R;
 import com.kaju.helo.calendar.ContactEvent;
@@ -28,19 +29,10 @@ public class CalendarNotificationBuilder {
 	
 	public Notification build(ContactEvent contactEvent) {
 
-		String contactName = contactEvent.getDisplayName();
+		ContactInfo contact = contactEvent.getContact();
+		String contactName = contact.getDisplayName();
 
-		String eventDesc = "";
-		switch (contactEvent.getEventType()) {
-		case Event.TYPE_BIRTHDAY:
-			eventDesc = getString(R.string.event_type_birthday);
-			break;
-		case Event.TYPE_ANNIVERSARY:
-			eventDesc = getString(R.string.event_type_anniversary);
-			break;
-		case Event.TYPE_OTHER:
-			break;
-		}
+		String eventDesc = getEventLabel(contactEvent);
 		
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
 		.setDefaults(Notification.DEFAULT_ALL)
@@ -49,9 +41,9 @@ public class CalendarNotificationBuilder {
 		.setContentText(eventDesc)
 		.setAutoCancel(true);			
 
-		String imageUriString = contactEvent.getPhotoThumbnail();
+		String imageUriString = contact.getPhotoThumbnail();
 		if (imageUriString != null) {
-			Uri imageUri = Uri.parse(contactEvent.getPhotoThumbnail());
+			Uri imageUri = Uri.parse(imageUriString);
 			try {
 				Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), imageUri);
 				mBuilder.setLargeIcon(bitmap);
@@ -62,17 +54,36 @@ public class CalendarNotificationBuilder {
 			}		
 		}
 		
-		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contactEvent.getPhoneNumber()));
+		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contact.getPhoneNumber()));
 		PendingIntent piCallIntent = PendingIntent.getActivity(mContext, 0, callIntent, 0);		
 		mBuilder.addAction(R.drawable.ic_action_call_dark, getString(R.string.action_call), piCallIntent);
 		
-		Intent messageIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + contactEvent.getPhoneNumber()));
+		Intent messageIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + contact.getPhoneNumber()));
 		PendingIntent piMssgIntent = PendingIntent.getActivity(mContext, 0, messageIntent, 0);		
 		mBuilder.addAction(R.drawable.ic_action_message_dark, "Message", piMssgIntent);
 
 		mBuilder.setContentIntent(buildContentIntent());		
 		
 		return mBuilder.build();		
+	}	
+	
+	private String getEventLabel(ContactEvent event) {
+		String eventLabel = "";
+		switch (event.getEventType()) {
+		case Event.TYPE_BIRTHDAY:
+			eventLabel = mContext.getResources().getString(R.string.event_type_birthday);
+			break;
+		case Event.TYPE_ANNIVERSARY:
+			eventLabel = mContext.getResources().getString(R.string.event_type_anniversary);
+			break;
+		case Event.TYPE_OTHER:
+			eventLabel = mContext.getResources().getString(R.string.event_type_other);
+			break;
+		case Event.TYPE_CUSTOM:
+			eventLabel = event.getEventLabel();
+			break;
+		}
+		return eventLabel;
 	}	
 	
 	private PendingIntent buildContentIntent() {

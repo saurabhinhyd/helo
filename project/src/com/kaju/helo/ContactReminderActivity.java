@@ -88,13 +88,14 @@ public class ContactReminderActivity extends ListActivity {
 	    
 	    mEventsTodayAdapter.clear();
 	    mEventsTodayLinearLayout.removeAllViews();
-	    for (ContactEvent event : db.getAllContactEvents()) {	    	
-	    	event.populate(this);
-	    	if (filter(event)) {
-	    		mEventsTodayAdapter.add(event);	    		
+	    for (String lookupKey : db.getAllContactsFromEvents()) {
+	    	for (ContactEvent event : ContactEvent.getAllEventsForContact(this, lookupKey)) {
+		    	if (filter(event)) {
+		    		mEventsTodayAdapter.add(event);	    		
+		    	}
 	    	}
 	    }
-    	mEventsTodayAdapter.sort(ContactInfo.CompareName);
+    	mEventsTodayAdapter.sort(ContactEvent.CompareContactName);
     	
 	    if (mEventsTodayAdapter.getCount() > 0) {
 	    	mEventsTodayHScrollView.setVisibility(View.VISIBLE);

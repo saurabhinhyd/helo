@@ -57,16 +57,16 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 		TextView eventTypeTextView = (TextView) rowView.findViewById(R.id.eventNameTextView);
 		eventTypeTextView.setText(eventLabel);
 		
-		String displayName = contactEvent.getDisplayName();
+		String displayName = contactEvent.getContact().getDisplayName();
 		TextView textView = (TextView) rowView.findViewById(R.id.contactNameTextView);
 		textView.setText(displayName);
 		
 		ImageView imgView = (ImageView) rowView.findViewById(R.id.contactPictureImageView);
-		String pictureUriString = contactEvent.getPhoto();
+		String pictureUriString = contactEvent.getContact().getPhoto();
 		if (pictureUriString != null) {			
 			imgView.setImageURI(Uri.parse(pictureUriString));
 		}
-		imgView.setTag(R.id.contact_phone_number, contactEvent.getPhoneNumber());
+		imgView.setTag(R.id.contact_phone_number, contactEvent.getContact().getPhoneNumber());
 		imgView.setOnClickListener(this.mDialBtnClickListener);	
 		
 		return rowView;
@@ -88,6 +88,9 @@ public class EventsTodayAdapter extends ArrayAdapter<ContactEvent> {
 			break;
 		case Event.TYPE_OTHER:
 			eventLabel = mContext.getResources().getString(R.string.event_type_other);
+			break;
+		case Event.TYPE_CUSTOM:
+			eventLabel = event.getEventLabel();
 			break;
 		}
 		return eventLabel;

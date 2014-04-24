@@ -44,12 +44,13 @@ public class ContactReminderService extends IntentService {
 		fireNotification(contactList);
 		
 		ArrayList<ContactEvent> contactEvents = new ArrayList<ContactEvent>();
-		for (ContactEvent event : db.getAllContactEvents()) {			
-			event.populate(this);
-			if (filterEvent(event)) {
-				contactEvents.add(event);
-			}
-		}
+	    for (String lookupKey : db.getAllContactsFromEvents()) {
+	    	for (ContactEvent event : ContactEvent.getAllEventsForContact(this, lookupKey)) {
+		    	if (filterEvent(event)) {
+		    		contactEvents.add(event);	    		
+		    	}
+	    	}
+	    }
 		
 		fireCalendarNotifications(contactEvents);
 	}	
